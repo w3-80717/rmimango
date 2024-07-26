@@ -5,12 +5,7 @@ export const navItems = [
       path: "./",
       cName: "nav-item",
     },
-    {
-      id: 2,
-      title: "Services",
-      path: "./services",
-      cName: "nav-item",
-    },
+    
     {
       id: 3,
       title: "Products",
@@ -21,6 +16,12 @@ export const navItems = [
       id: 4,
       title: "Contact Us",
       path: "./contactus",
+      cName: "nav-item",
+    },
+    {
+      id: 2,
+      title: "FAQs",
+      path: "./faqs",
       cName: "nav-item",
     },
   ];

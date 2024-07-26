@@ -6,5 +6,9 @@
   
 }
 .contact label{
-  color: wheat;
+  color: rgb(30, 21, 5);
 }
+.container .p{
+  text-size:30px;
+}
+

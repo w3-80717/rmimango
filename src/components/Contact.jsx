@@ -4,7 +4,15 @@ import Button from './Button'
 
 const Contact = () => {
   return (
-    <section className='contact'>
+       <div>
+        <p className='container'>Phone no: +91-22-48962640
+
+Email ID: support@blobcity.com
+
+Address: NIBR Corporate Park 1Aerocity, Andheri - Kurla Rd, Safed Pool, Shivaji Nagar, Jarimari, Saki Naka, Mumbai, Maharashtra 400072. 
+
+Headquarters: WeWork, Enam Sambhav, C-20, G Block Rd, G Block BKC, Bandra Kurla Complex, Bandra East, Mumbai, Maharashtra 400051.</p>
+       <section className='contact'>
       <form>
         <h2>Contact Form</h2>
         <div className='input-box'>
@@ -45,6 +53,7 @@ const Contact = () => {
 
       </form>
     </section>
+    </div>
   )
 }
 

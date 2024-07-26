@@ -9,8 +9,10 @@ import Design from "./pages/Design";
 import Development from "./pages/Development";
 import Marketing from "./pages/Marketing";
 import Products from "./pages/Products";
-import Services from "./pages/Services";
+//import Faqs from "./pages/Faqs";
 import Signup from "./pages/Signup";
+import Faqs from "./pages/Faqs";
+//import LoginSignUp from "./components/LoginSignUp";
 
 function App() {
   return (
@@ -21,7 +23,7 @@ function App() {
           <Route path="/" exact element={<Home />}/>
           <Route path="/contactus" element={<Contactus/>}/>
           <Route path="/products" element={<Products/>}></Route>
-          <Route path="/services" element={<Services/>}></Route>
+          <Route path="/faqs" element={<Faqs/>}></Route>
           <Route path="/signup" element={<Signup/>}></Route>
           <Route path="/marketing" element={<Marketing/>}></Route>
           <Route path="/development" element={<Development/>}></Route>

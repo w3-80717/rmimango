@@ -8,6 +8,7 @@
 }
 
 .home,
+.faqs,
 .consulting,
 .contactus,
 .design,
@@ -26,44 +27,7 @@
   background-size: cover;
 
   background-attachment: fixed;
-  
+  background-image: url('./images/mangob.jpeg'); 
 }
 
 
-.home {
-  background-image: url(./images/home.jpg);
-background-size: contain;
-}
-
-.consulting {
-  background-image: url('./images/consulting.jpg');
-
-}
-
-.design {
-  background-image: url(./images/design.jpg);
-}
-
-.development {
-  background-image: url(./images/development.jpg);
-}
-
-.marketing {
-  background-image: url(./images/marketing.jpg);
-}
-
-.products {
-  background-image: url(./images/products.jpg);
-}
-
-.contactus {
-  background-image: url(./images/contactus.jpg);
-}
-
-.services {
-  background-image: url(./images/services.jpg);
-}
-
-.signup {
-  background-image: url(./images/signup.jpg);
-}
