@@ -7,8 +7,9 @@
     
   }
   .navbar-logo img{
-    width: 4rem;
+    width: 10vh;
     clip-path: circle(45%);
+    filter: saturate(300%);
   }
   .navbar-logo span{
     flex-grow: 1;
