@@ -14,9 +14,8 @@ function Navbar() {
     <>
       <nav className="navbar">
         <Link to="/" className="navbar-logo">
-          NATURE
-          <Icons.FaTree />
-          
+        <span>RMI Mangoes</span>
+        <img src="/images/logo.jpg" alt=""/>          
         </Link>
         <ul className="nav-items">
           {navItems.map((item) => {

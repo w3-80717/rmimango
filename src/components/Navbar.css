@@ -6,11 +6,17 @@
     align-items: center;
     
   }
-  
+  .navbar-logo img{
+    width: 4rem;
+    clip-path: circle(45%);
+  }
+  .navbar-logo span{
+    flex-grow: 1;
+  }
   .navbar-logo {
     color: white;
     text-decoration: none;
-    font-size: 2rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
