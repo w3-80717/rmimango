@@ -1,15 +1,37 @@
 import React from "react";
-//import "./components/Product.css"
-function Products() {
+import "../components/Product.css"
+//import data  from "./components/data/Data"
+const Products = ({productItems}) => {
   return (
     <div className="products">
-      <h1 >Products</h1>
+    {productItems.map((productItem) => (
       <div className="card">
-      <img src="/images/mango1.jpeg"/>
-      <p>price:800 Rs</p>
+
+        <div>
+      <img 
+         className="product-image"
+          src={productItem.image} 
+          alt={productItem.name}/>
       </div>
+
+      <div >
+      <h3 className="product-name">{productItem.name}</h3>
+      </div>
+
+      <div >
+      <h3 className="product-price">{productItem.price}</h3>
+      </div>
+
+      <div>
+        <button className="product-add-button"> Add to Cart</button>
     </div>
-  );
-}
+    </div>
+  ))}
+  </div>
+);
+};
 
 export default Products;
+
+
+

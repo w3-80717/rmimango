@@ -1,20 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
+import data  from "./components/data/Data"
 import "./App.css";
+
 import { BrowserRouter, Route, Routes} from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Consulting from "./pages/Consulting";
+
 import Contactus from "./pages/Contactus";
-import Design from "./pages/Design";
-import Development from "./pages/Development";
-import Marketing from "./pages/Marketing";
+
 import Products from "./pages/Products";
-//import Faqs from "./pages/Faqs";
+import Cart from "./pages/Cart"
 import Signup from "./pages/Signup";
 import Faqs from "./pages/Faqs";
 //import LoginSignUp from "./components/LoginSignUp";
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
   return (
     <>
       <BrowserRouter>
@@ -22,13 +23,10 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />}/>
           <Route path="/contactus" element={<Contactus/>}/>
-          <Route path="/products" element={<Products/>}></Route>
-          <Route path="/faqs" element={<Faqs/>}></Route>
+          <Route path="/products" element={<Products productItems={data.productItem} /> } ></Route>          <Route path="/faqs" element={<Faqs/>}></Route>
           <Route path="/signup" element={<Signup/>}></Route>
-          <Route path="/marketing" element={<Marketing/>}></Route>
-          <Route path="/development" element={<Development/>}></Route>
-          <Route path="/design" element={<Design/>}></Route>
-          <Route path="/consulting" element={<Consulting/>}></Route>
+         
+          <Route path="/cart" element={<Cart cartItems={cartItems} />}></Route>
         </Routes>
       </BrowserRouter>
     </>

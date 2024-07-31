@@ -4,7 +4,7 @@
     margin: auto;
     margin-top: 30px;
     width: 500px;
-    background: wheat;
+    background: rgb(68, 143, 38);
     padding-bottom: 30px;
     justify-content: center;
     align-items: center;
@@ -73,7 +73,7 @@
     width: 220px;
     height: 59px;
     color: white;
-    background: rgb(124, 213, 240);
+    background: rgb(60, 175, 32);
     border-radius: 50px;
     font-size: 19px;
     font-weight: 700;
@@ -81,6 +81,6 @@
 }
 
 .gray{
-    background: #eaeaea;
+    background: #cfc31d;
     color: #676767;
 }
