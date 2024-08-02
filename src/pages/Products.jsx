@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../components/Product.css"
 //import data  from "./components/data/Data"
-const Products = ({ productItems, handleAddProduct}) => {
+import * as productService from "../service/productService";
+const Products = ({ productItems, handleAddProduct }) => {
+
+  // product list state
+  const [productList, setProductsList] = useState([]);
+  // fetch all the products when the page loads
+  useEffect(
+    () => {
+      productService.getAllProducts()
+        .then((plist) => {
+          console.log("Got list of products: ", plist);
+          setProductsList(plist);
+        }
+        )
+        .catch((err) => {
+          console.error("error occured while fetching the products list: ", err);
+        });
+    },
+    []
+  );
+
   return (
     <div className="products">
-      {productItems.map((productItem) => (
-        <div className="card">
+      {productList.map((productItem) => (
+        <div itemID={productItem.id} className="card">
 
           <div>
             <img
