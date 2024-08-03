@@ -2,16 +2,16 @@ import api from './api';
 
 const registerUser = async (credentials) => {
   try {
-    const response = await api.post('/auth/register', credentials);
+    const response = await api.post('/api/auth/register', credentials);
     return response.data;
   } catch (error) {
     throw error.response.data;
   }
-};
+};/*  */
 
 const loginUser = async (credentials) => {
   try {
-    const response = await api.post('/auth/login', credentials);
+    const response = await api.post('/api/auth/login', credentials);
     return response.data;
   } catch (error) {
     throw error.response.data;
@@ -20,7 +20,7 @@ const loginUser = async (credentials) => {
 
 const logoutUser = async () => {
   try {
-    const response = await api.post('/auth/logout');
+    const response = await api.post('/api/auth/logout');
     return response.data;
   } catch (error) {
     throw error.response.data;
