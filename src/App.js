@@ -55,18 +55,19 @@ function App() {
     <>
       <BrowserRouter>
         <Navbar />
-        <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/contactus" element={<Contactus />} />
-          <Route path="/products" element={<Products productItems={data.productItem} handleAddProduct={handleAddProduct} />} ></Route>
-          <Route path="/faqs" element={<Faqs />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-
-          <Route path="/cart" element={<Cart cartItems={cartItems} 
-          handleAddProduct={handleAddProduct} 
-           handleRemoveProduct={handleRemoveProduct}
-           handleCartClearance={handleCartClearance}/>}></Route>
-        </Routes>
+        <article className="main-content">
+          <Routes>
+            <Route path="/" exact element={<Home />} />
+            <Route path="/contactus" element={<Contactus />} />
+            <Route path="/products" element={<Products productItems={data.productItem} handleAddProduct={handleAddProduct} />} ></Route>
+            <Route path="/faqs" element={<Faqs />}></Route>
+            <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/cart" element={<Cart cartItems={cartItems}
+              handleAddProduct={handleAddProduct}
+              handleRemoveProduct={handleRemoveProduct}
+              handleCartClearance={handleCartClearance} />}></Route>
+          </Routes>
+        </article>
       </BrowserRouter>
     </>
   );

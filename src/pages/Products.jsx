@@ -46,7 +46,7 @@ const Products = ({ productItems, handleAddProduct }) => {
             <button className="product-add-button" onClick={() => handleAddProduct(productItem)}> Add to Cart</button>
           </div>
         </div>
-      ))};
+      ))}
     </div>
   );
 };

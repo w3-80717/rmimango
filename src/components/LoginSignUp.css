@@ -79,7 +79,9 @@
     font-weight: 700;
     cursor: pointer;
 }
-
+.submit-container button{
+    border: none;
+}
 .gray{
     background: #cfc31d;
     color: #676767;

@@ -7,23 +7,14 @@
   font-family: "PT Sans", sans-serif;
 }
 
-.home,
-.faqs,
-.consulting,
-.contactus,
-.design,
-.development,
-.marketing,
-.products,
-.services,
-.signup {
-
+.main-content {
+  padding: 20px;
   justify-content: center;
   align-items: center;
   height: 100vh;
   
   background-position: center;
-  background-repeat: none;
+  background-repeat: no-repeat;
   background-size: cover;
 
   background-attachment: fixed;
