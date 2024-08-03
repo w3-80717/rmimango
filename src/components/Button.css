@@ -14,3 +14,10 @@
     color: rgb(135, 231, 46);
     background: white;
   }
+  .btn.logout{
+    background:orangered;
+  }
+  .btn.logout:hover{
+    background: red;
+    color: black;
+  }

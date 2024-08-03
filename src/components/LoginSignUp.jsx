@@ -50,7 +50,8 @@ const LoginSignUp = () => {
     console.log(email, password);
     authService.loginUser({email,password}).then((data)=>{
       localStorage.setItem('token',data.token);
-      navigate('/');
+      document.location="/";
+
 
     }).catch(err=>{
       alert(err.message);
