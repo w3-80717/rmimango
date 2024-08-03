@@ -1,5 +1,10 @@
 import api from './api';
 
+/**
+ * 
+ * @param {{ fullName:string, email:string, password:string, address:string} }credentials 
+ * @returns 
+ */
 const registerUser = async (credentials) => {
   try {
     const response = await api.post('/api/auth/register', credentials);
@@ -9,6 +14,11 @@ const registerUser = async (credentials) => {
   }
 };/*  */
 
+/**
+ * 
+ * @param {{email:string, password:string}} credentials 
+ * @returns 
+ */
 const loginUser = async (credentials) => {
   try {
     const response = await api.post('/api/auth/login', credentials);

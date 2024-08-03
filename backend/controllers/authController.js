@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
   }
 
   if (!/^[a-zA-Z ]+$/.test(fullName)) {
-    return res.status(400).json({ message: 'Invalid full name format' });
+    return res.status(400).json({ message: 'Invalid full name format, numbers are not allowed' });
   }
 
   if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
@@ -34,7 +34,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = await User.create({ fullName, email, password: hashedPassword });
+    const newUser = (await User.create({ fullName, email, password: hashedPassword })).dataValues;
 
     // Return new user without password
     const { password: _, ...user } = newUser;
@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Return token and user data (excluding password)
-    const { password: _, ...userData } = user;
+    const { password: _, ...userData } = user.dataValues;
     res.status(200).json({ token, user: userData });
   } catch (error) {
     // Log error for debugging purposes
