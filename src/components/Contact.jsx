@@ -42,7 +42,17 @@ const LoginSignUp = () => {
       <div className='header'>
         <div className='text'>Contact Form</div>
         <div className='underline'></div>
+      
       </div>
+      <div>
+                <p className='containers'><strong>  Phone no:</strong>   +91-22-48962640<br />
+
+                <strong>Email ID:</strong> support@blobcity.com<br />
+
+                <strong>Address: </strong>NIBR Corporate Park 1Aerocity, Andheri - Kurla Rd, Safed Pool, Shivaji Nagar, Jarimari, Saki Naka, Mumbai, Maharashtra 400072.<br />
+
+                <strong>Headquarters: </strong> WeWork, Enam Sambhav, C-20, G Block Rd, G Block BKC, Bandra Kurla Complex, Bandra East, Mumbai, Maharashtra 400051.</p>
+                </div>
       {
         <>
           <div className='inputs'>
@@ -82,7 +92,7 @@ const LoginSignUp = () => {
           </div>
         </>
       }
-
+      
     </div>
   )
 }

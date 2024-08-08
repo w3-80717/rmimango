@@ -1,0 +1,18 @@
+.fpa h1.faqs{
+    justify-items: center;
+}
+
+.fpa p.fpara{
+color: rgba(45, 146, 15, 0.897);
+  font-size: large;
+  line-height: 30px ;
+  margin-top: 10px;
+  margin-left: 30px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+
+.fpa p.fpara Strong{
+    font-weight: bolder ;
+  color: rgb(19, 117, 32);
+}

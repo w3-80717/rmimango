@@ -1,12 +1,13 @@
 import Contact from "../components/Contact";
 
 function Contactus() {
-    return ( 
+    return (
         <div className="contactus">
+
+            <Contact />
             
-            <Contact/>
         </div>
-     );
+    );
 }
 
 export default Contactus;

@@ -13,6 +13,7 @@
   }
   .navbar-logo span{
     flex-grow: 1;
+    font-family: cursive;
   }
   .navbar-logo {
     color: white;
@@ -22,6 +23,7 @@
     align-items: center;
     justify-content: space-between;
     width: 10rem;
+    gap: 10px;
   }
   
   .nav-items {

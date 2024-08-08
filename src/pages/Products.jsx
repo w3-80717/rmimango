@@ -30,7 +30,7 @@ const Products = ({ productItems, handleAddProduct }) => {
           <div>
             <img
               className="product-image"
-              src={productItem.image}
+              src={productItem.imageUrl}
               alt={productItem.name} />
           </div>
 

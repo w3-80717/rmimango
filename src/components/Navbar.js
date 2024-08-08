@@ -11,8 +11,8 @@ function Navbar() {
     <>
       <nav className="navbar">
         <Link to="/" className="navbar-logo">
+        <img src="/images/logo2.jpg" alt=""/>          
         <span>RMI Mangoes</span>
-        <img src="/images/logo.jpg" alt=""/>          
         </Link>
         <ul className="nav-items">
           {navItems.map((item) => {
