@@ -1,7 +1,7 @@
 // controllers/favoriteController.js
 const Favorite = require('../models/Favorite');
 const Product = require('../models/Product');
-exports.addToFavorites = async (req, res) => {
+exports.addToFavorites = async (req, res, next) => {
   const { productId } = req.body;
   const userId = req.user.userId;
 
@@ -9,7 +9,7 @@ exports.addToFavorites = async (req, res) => {
     // Check if product exists
     const product = await Product.findByPk(productId);
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     // Create or update favorite item
@@ -23,11 +23,11 @@ exports.addToFavorites = async (req, res) => {
     res.status(201).json(favorites);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to add favorite' });
+    res.status(500).json({ message: 'Failed to add favorite' });
   }
 };
 
-exports.getFavorites = async (req, res) => {
+exports.getFavorites = async (req, res, next) => {
   const userId = req.user.userId;
   const { page = 1, limit = 10 } = req.query;
 
@@ -46,10 +46,10 @@ exports.getFavorites = async (req, res) => {
     res.status(200).json(favorites);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to retrieve favorites' });
+    res.status(500).json({ message: 'Failed to retrieve favorites' });
   }
 };
-exports.removeItem = async (req, res) => {
+exports.removeItem = async (req, res, next) => {
   // routes/favorite.js
   try {
     const productId = req.params.productId;

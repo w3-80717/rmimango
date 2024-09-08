@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
   const { fullName, email, password } = req.body;
 
   // Validate input formats
@@ -44,10 +44,10 @@ exports.register = async (req, res) => {
     console.error(error);
 
     // Return generic error message to user
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   // Validate input formats
@@ -75,10 +75,6 @@ exports.login = async (req, res) => {
     const { password: _, ...userData } = user.dataValues;
     res.status(200).json({ token, user: userData });
   } catch (error) {
-    // Log error for debugging purposes
-    console.error(error);
-
-    // Return generic error message to user
-    res.status(500).json({ error: 'Internal Server Error' });
+    next(error)
   }
 };

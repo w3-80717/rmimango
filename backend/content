@@ -1,0 +1,950 @@
+==> ./config/database.js <==
+// config/database.js
+const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
+});
+
+module.exports = sequelize;
+==> ./middlewares/authMiddleware.js <==
+const jwt = require('jsonwebtoken');
+
+const getTokenFromHeader = (req) => {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7); // Remove 'Bearer ' prefix
+  }
+  return null;
+};
+
+const verifyToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+};
+
+const checkRole = (requireAdmin, isAdmin) => {
+  if (requireAdmin !== isAdmin) {
+    throw new Error('Access denied');
+  }
+};
+
+
+
+
+const authMiddleware = (requireAdmin=false) => {
+  return (req, res, next) => {
+    const token = getTokenFromHeader(req);
+    if (!token) {
+      return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    try {
+      const decoded = verifyToken(token);
+      req.user = decoded;
+      checkRole(requireAdmin, req.user.isAdmin);
+      next();
+    } catch (error) {
+      res.status(401).json({ message: error.message });
+      console.log(error);
+    }
+  };
+};
+
+module.exports = authMiddleware;
+==> ./content <==
+==> ./models/Order.js <==
+// models/Order.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const User = require('./User');
+
+const Order = sequelize.define('Order', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  totalPrice: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: 'Pending'
+  }
+});
+
+module.exports = Order;
+==> ./models/Product.js <==
+// models/Product.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Product = sequelize.define('Product', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  },
+  imageUrl: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+});
+
+module.exports = Product;
+==> ./models/User.js <==
+// models/User.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  fullName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  }
+});
+
+module.exports = User;
+==> ./models/OrderItem.js <==
+// models/OrderItem.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Order = require('./Order');
+const Product = require('./Product');
+
+const OrderItem = sequelize.define('OrderItem', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  orderId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Order,
+      key: 'id'
+    }
+  },
+  productId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Product,
+      key: 'id'
+    }
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  }
+});
+OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
+
+module.exports = OrderItem;
+==> ./models/Cart.js <==
+// models/Cart.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const User = require('./User');
+const Product = require('./Product');
+
+const Cart = sequelize.define('Cart', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  productId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Product,
+      key: 'id'
+    }
+  },
+  quantity: {
+    type: DataTypes.FLOAT,
+    allowNull: false
+  }
+});
+
+Cart.belongsTo(Product, {foreignKey:"productId"});
+module.exports = Cart;
+==> ./models/Favorite.js <==
+// models/Favorite.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const User = require('./User');
+const Product = require('./Product');
+
+const Favorite = sequelize.define('Favorite', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
+  },
+  productId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Product,
+      key: 'id'
+    }
+  }
+});
+
+Favorite.belongsTo(User, { foreignKey: 'userId' });
+Favorite.belongsTo(Product, { foreignKey: 'productId' });
+
+
+module.exports = Favorite;
+==> ./controllers/authController.js <==
+// controllers/authController.js
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+exports.register = async (req, res, next) => {
+  const { fullName, email, password } = req.body;
+
+  // Validate input formats
+  if (!fullName || !email || !password) {
+    return res.status(400).json({ message: 'Please fill in all fields' });
+  }
+
+  if (!/^[a-zA-Z ]+$/.test(fullName)) {
+    return res.status(400).json({ message: 'Invalid full name format' });
+  }
+
+  if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters' });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = await User.create({ fullName, email, password: hashedPassword });
+
+    // Return new user without password
+    const { password: _, ...user } = newUser;
+    res.status(201).json(user);
+  } catch (error) {
+    // Log error for debugging purposes
+    console.error(error);
+
+    // Return generic error message to user
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Validate input formats
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Please fill in all fields' });
+  }
+
+  try {
+    // Find user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // Return token and user data (excluding password)
+    const { password: _, ...userData } = user;
+    res.status(200).json({ token, user: userData });
+  } catch (error) {
+    // Log error for debugging purposes
+    console.error(error);
+
+    // Return generic error message to user
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};==> ./controllers/productController.js <==
+// controllers/productController.js
+const Product = require('../models/Product');
+
+exports.addProduct = async (req, res, next) => {
+  const { title, description, price, imageUrl } = req.body;
+  try {
+    const newProduct = await Product.create({ title, description, price, imageUrl });
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getProducts = async (req, res, next) => {
+  const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
+
+  try {
+    const products = await Product.findAll({
+      offset: (page - 1) * limit,
+      limit,
+      order: [[sortBy, sortOrder.toUpperCase()]],
+    });
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateProduct = async (req, res, next) => {
+  const { productId } = req.params;
+  const { title, description, price, imageUrl } = req.body;
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    product.title = title;
+    product.description = description;
+    product.price = price;
+    product.imageUrl = imageUrl;
+    await product.save();
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteProduct = async (req, res, next) => {
+  const { productId } = req.params;
+  try {
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    await product.destroy();
+    res.status(200).json({ message: 'Product deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+==> ./controllers/orderController.js <==
+// controllers/orderController.js
+const Order = require('../models/Order');
+const Cart = require('../models/Cart');
+const Product = require('../models/Product');
+const { processPayment } = require('../utils/paymentGateway');
+const OrderItem = require('../models/OrderItem');
+const sequelize = require('../config/database');
+
+
+
+exports.checkout = async (req, res, next) => {
+  const userId = req.user.userId;
+  const { shippingAddress, paymentMethod } = req.body;
+  // Validate shipping address and payment method
+  if (!shippingAddress || !paymentMethod) {
+    return res.status(400).json({ message: 'Invalid shipping address or payment method' });
+  }
+
+  try {
+    // Fetch cart items and products for the user from the database
+    const cartItems = await Cart.findAll({
+      where: { userId },
+      include: Product,
+    });
+
+    if (cartItems.length === 0) {
+      return res.status(400).json({ message: 'No items in the cart' });
+    }
+
+    // Calculate the total price
+    let totalPrice = 0;
+    for (const item of cartItems) {
+      totalPrice += item.Product.price * item.quantity;
+    }
+
+    // Process payment
+    const paymentOrder = await processPayment(totalPrice);
+    if (!paymentOrder) {
+      return res.status(500).json({ message: 'Payment processing failed' });
+    }
+
+    // Create a new order and order items in a transaction
+    const transaction = await sequelize.transaction();
+    try {
+      const newOrder = await Order.create(
+        { userId, totalPrice, status: 'Payment Pending', shippingAddress },
+        { transaction }
+      );
+
+      const orderItems = cartItems.map((item) => ({
+        orderId: newOrder.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.Product.price,
+      }));
+
+      await OrderItem.bulkCreate(orderItems, { transaction });
+
+      await Cart.destroy({ where: { userId } }, { transaction });
+
+      await transaction.commit();
+
+      res.status(201).json({ newOrder, paymentOrder });
+    } catch (error) {
+      await transaction.rollback();
+      console.error(error); // Log the error
+      res.status(500).json({ message: error.message });
+    }
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getOrder = async (req, res, next) => {
+  const { orderId } = req.params;
+  const userId = req.user.userId;
+  const isAdmin = req.user.isAdmin;
+
+  try {
+    let order;
+    if (isAdmin) {
+      console.log(`Admin ${userId} retrieved order ${orderId}`);
+      order = await Order.findByPk(orderId);
+    } else {
+      console.log(`Customer ${userId} retrieved order ${orderId}`);
+      order = await Order.findOne({ where: { id: orderId, userId } });
+    }
+
+    if (!order) {
+      console.error(`Order not found for user ${userId} and order ID ${orderId}`); // Log the error
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.getAllOrders = async (req, res, next) => {
+  const userId = req.user.userId;
+  const isAdmin = req.user.isAdmin;
+
+  try {
+    let orders;
+    if (isAdmin) {
+      console.log(`Admin ${userId} retrieved all orders`);
+      orders = await Order.findAll();
+      console.log(`Retrieved ${orders.length} orders`);
+    } else {
+      console.log(`Customer ${userId} retrieved orders`);
+      orders = await Order.findAll({ where: { userId } });
+    }
+
+    if (orders === null || orders === undefined) {
+      console.error(`Cannot get orders for the user ${userId}`); // Log the error
+      return res.status(404).json({ message: 'No orders found' });
+    }
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+exports.updateOrderStatus = async (req, res, next) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  // Validate order status
+  if (!['Payment Pending', 'Payment Successful', 'Shipped', 'Delivered', 'Cancelled'].includes(status)) {
+    return res.status(400).json({ message: 'Invalid order status' });
+  }
+  try {
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    order.status = status;
+    await order.save();
+    res.status(200).json(order);
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: error.message });
+  }
+};
+==> ./controllers/cartController.js <==
+// controllers/cartController.js
+const Cart = require('../models/Cart');
+const Product = require('../models/Product');
+
+exports.addToCart = async (req, res, next) => {
+  const { productId, quantity } = req.body;
+  const userId = req.user.userId;
+
+  // Validate quantity
+  if (quantity <= 0) {
+    return res.status(400).json({ message: 'Invalid quantity' });
+  }
+
+  // Check if product exists
+  const product = await Product.findByPk(productId);
+  if (!product) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+
+  // Update cart item
+  const [cartItem, created] = await Cart.findOrCreate({
+    where: { userId, productId },
+    defaults: { quantity },
+  });
+
+  if (!created) {
+    cartItem.quantity += quantity;
+    await cartItem.save();
+  }
+
+  const cart = await Cart.findAll({ where: { userId }, include: Product });
+  res.status(201).json(cart);
+};
+
+
+exports.getCart = async (req, res, next) => {
+  if (!req.user.userId) {
+    return res.status(401).json({ message: 'User ID is required' });
+  }
+
+  const { page = 1, limit = 10 } = req.query; // Get page and limit from query params
+  const offset = (page - 1) * limit; // Calculate offset
+
+  try {
+    const cart = await Cart.findAll({
+      where: { userId: req.user.userId },
+      include: Product,
+      limit,
+      offset,
+    });
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'Failed to retrieve cart' });
+  }
+};
+
+exports.removeItem = async (req, res, next) => {
+  try {
+    const productId = req.params.productId;
+    const userId = req.user.userId;
+    const cartItem = await Cart.findOne({ where: { userId, productId } });
+    if (!cartItem) {
+      return res.status(404).json({ message: 'Cart item not found' });
+    }
+    await Cart.destroy({ where: { userId, productId } });
+    res.json({ message: 'Item removed from cart' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error removing item from cart' });
+  }
+};
+
+exports.updateQuantity = async (req, res, next) => {
+  try {
+    const productId = req.params.productId;
+    const userId = req.user.userId;
+    const quantity = req.body.quantity;
+    const cartItem = await Cart.findOne({ where: { userId, productId } });
+    if (!cartItem) {
+      return res.status(404).json({ message: 'Cart item not found' });
+    }
+    cartItem.quantity = quantity;
+    await cartItem.save();
+    res.json({ message: 'Cart item quantity updated' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error updating cart item quantity' });
+  }
+};==> ./controllers/favoriteController.js <==
+// controllers/favoriteController.js
+const Favorite = require('../models/Favorite');
+const Product = require('../models/Product');
+exports.addToFavorites = async (req, res, next) => {
+  const { productId } = req.body;
+  const userId = req.user.userId;
+
+  try {
+    // Check if product exists
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Create or update favorite item
+    await Favorite.findOrCreate({
+      where: { userId, productId },
+    });
+
+    // Retrieve all favorite items
+    const favorites = await Favorite.findAll({ where: { userId }, include: Product });
+
+    res.status(201).json(favorites);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to add favorite' });
+  }
+};
+
+exports.getFavorites = async (req, res, next) => {
+  const userId = req.user.userId;
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    // Calculate offset
+    const offset = (page - 1) * limit;
+
+    // Retrieve favorite items with pagination
+    const favorites = await Favorite.findAll({
+      where: { userId },
+      include: Product,
+      limit,
+      offset,
+    });
+
+    res.status(200).json(favorites);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to retrieve favorites' });
+  }
+};
+exports.removeItem = async (req, res, next) => {
+  // routes/favorite.js
+  try {
+    const productId = req.params.productId;
+    const userId = req.user.userId;
+    await Favorite.destroy({ where: { userId, productId } });
+    res.json({ message: 'Item removed from favorites' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error removing item from favorites' });
+  }
+};
+
+==> ./utils/paymentGateway.js <==
+const Razorpay = require('razorpay');
+const shortid = require('shortid');
+
+let processPayment;
+
+if (process.env.NODE_ENV === 'development') {
+  processPayment = require('./mockPaymentGateway').processPayment;
+} else {
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  // Create order with Razorpay
+  processPayment = async (amount, currency = 'INR') => {
+    try {
+      const orderOptions = {
+        amount: amount * 100, // amount in paisa
+        currency,
+        receipt: shortid.generate(),
+        payment_capture: 1, // Automatically capture payment
+      };
+
+      const order = await razorpay.orders.create(orderOptions);
+      return order;
+    } catch (error) {
+      console.error('Error creating Razorpay order:', error);
+      throw new Error('Failed to create payment order');
+    }
+  };
+
+  // Verify payment with Razorpay
+  const verifyPayment = async (paymentId, orderId, signature) => {
+    try {
+      const crypto = require('crypto');
+      const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .update(`${orderId}|${paymentId}`)
+        .digest('hex');
+
+      if (generatedSignature !== signature) {
+        console.error('Invalid signature');
+        throw new Error('Invalid signature');
+      }
+
+      // Here you can implement additional verification logic if needed
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+      throw new Error('Failed to verify payment');
+    }
+  };
+
+  module.exports = {
+    processPayment,
+    verifyPayment,
+  };
+}==> ./utils/mockPaymentGateway.js <==
+// utils/mockPaymentGateway.js
+const shortid = require('shortid');
+
+exports.processPayment = async (amount, currency = 'INR') => {
+  return {
+    id: shortid.generate(),
+    amount,
+    currency,
+    receipt: shortid.generate(),
+    status: 'created',
+  };
+};
+==> ./.env <==
+PORT=8000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=manager
+DB_NAME=mango_ecommerce
+JWT_SECRET=your_jwt_secret
+NODE_ENV=development
+RAZORPAY_KEY_ID=dummy_key
+RAZORPAY_KEY_SECRET=dummy_secret
+==> ./create-admin.js <==
+const bcrypt = require('bcrypt');
+require('dotenv').config();
+
+const User = require('./models/User'); // Adjust the path as necessary
+
+const createAdminUser = async () => {
+  try {
+    // Hash the password
+    const hashedPassword = await bcrypt.hash('admin_password', 10);
+
+    // Create an admin user
+    const adminUser = await User.create({
+      fullName: 'Admin User',
+      email: 'admin@example.com',
+      password: hashedPassword,
+      isAdmin: true
+    });
+
+    console.log('Admin user created:', adminUser);
+  } catch (error) {
+    console.error('Error creating admin user:', error);
+  }
+};
+
+// Run the function
+createAdminUser();
+==> ./package.json <==
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"message: no test specified\" && exit 1",
+    "debug": "nodemon server.js",
+    "dev": "nodemon server.js",
+    "start": "NODE_ENV=production node server.js",
+    "lint": "eslint .",
+    "build": "echo \"message: no build specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0",
+    "nodemailer": "^6.9.14",
+    "razorpay": "^2.9.4",
+    "sequelize": "^6.37.3",
+    "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "chai-http": "^5.0.0",
+    "mocha": "^10.7.0",
+    "nodemon": "^3.1.4"
+  }
+}
+==> ./server.js <==
+// server.js (updated)
+require('dotenv').config();
+const express = require('express');
+const sequelize = require('./config/database');
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/product');
+const cartRoutes = require('./routes/cart');
+const favoriteRoutes = require('./routes/favorite');
+const orderRoutes = require('./routes/order');
+
+const app = express();
+app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/orders', orderRoutes);
+
+const PORT = process.env.PORT || 3000;
+
+sequelize.sync({ alter: true }).then(() => {
+  console.log('Database & tables created!');
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => console.log('message: ' + err));
+==> ./routes/auth.js <==
+// routes/auth.js
+const express = require('express');
+const { register, login } = require('../controllers/authController');
+const router = express.Router();
+
+router.post('/register', register);
+router.post('/login', login);
+
+module.exports = router;
+==> ./routes/cart.js <==
+const express = require('express');
+const { addToCart, getCart, removeItem, updateQuantity } = require('../controllers/cartController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const router = express.Router();
+
+router.post('/', authMiddleware(), addToCart);
+router.get('/', authMiddleware(), getCart);
+router.delete('/:productId', authMiddleware(), removeItem);
+router.patch('/:productId', authMiddleware(), updateQuantity);
+
+module.exports = router;
+==> ./routes/product.js <==
+const express = require('express');
+const { addProduct, getProducts, updateProduct, deleteProduct } = require('../controllers/productController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const router = express.Router();
+
+// Admin routes
+router.post('/', authMiddleware(true), addProduct);  // Admin required
+router.put('/:productId', authMiddleware(true), updateProduct);  // Admin required
+router.delete('/:productId', authMiddleware(true), deleteProduct);  // Admin required
+
+// Public route
+router.get('/', getProducts);
+
+module.exports = router;
+==> ./routes/order.js <==
+const express = require('express');
+const { checkout, getOrder, updateOrderStatus, getAllOrders } = require('../controllers/orderController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const router = express.Router();
+
+// Admin routes
+router.put('/:orderId', authMiddleware(true), updateOrderStatus);  // Admin required
+
+// Authenticated routes
+router.post('/checkout', authMiddleware(), checkout);
+router.get('/:orderId', authMiddleware(), getOrder);
+router.get('/', authMiddleware(), getOrder);
+// routes/order.js
+router.get('/', authMiddleware(true), getAllOrders);
+
+module.exports = router;
+==> ./routes/favorite.js <==
+// routes/favorite.js
+const express = require('express');
+const { addToFavorites, getFavorites, removeItem } = require('../controllers/favoriteController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const router = express.Router();
+
+router.post('/', authMiddleware(), addToFavorites);
+router.get('/', authMiddleware(), getFavorites);
+// routes/favorite.js
+router.delete('/:productId', authMiddleware(), removeItem);
+
+module.exports = router;

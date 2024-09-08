@@ -1,0 +1,59 @@
+@import url(https://fonts.googleapis.com/css2?family=Playwrite+ID:wght@100..400&display=swap);
+.navbar {
+    height: 10vh;
+    background: #5d8012;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .navbar-logo img{
+    width: 10vh;
+    clip-path: circle(45%);
+    filter: saturate(300%);
+  }
+  .navbar-logo span{
+    flex-grow: 1;
+    /* font-family: "Cedarville Cursive", cursive; */
+    /* font-family: "Matemasie", sans-serif; */
+    font-family: "Playwrite ID", cursive;
+    font-size: small;
+  }
+  .navbar-logo {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 20rem;
+    gap: 1px;
+  }
+  
+  .nav-items {
+    display: flex;
+    list-style: none;
+    text-align: center;
+    width: 80vw;
+    justify-content: flex-end;
+    margin-right: 1rem;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    height: 10vh;
+  }
+  
+  .nav-item a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.1rem;
+    margin-right: 2rem;
+    padding: 6px 16px;
+    border-radius: 5px;
+  }
+  
+  .nav-item a:hover {
+    background: rgb(124, 212, 0);
+  }

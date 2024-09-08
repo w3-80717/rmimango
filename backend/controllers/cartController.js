@@ -2,19 +2,19 @@
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
-exports.addToCart = async (req, res) => {
+exports.addToCart = async (req, res, next) => {
   const { productId, quantity } = req.body;
   const userId = req.user.userId;
 
   // Validate quantity
   if (quantity <= 0) {
-    return res.status(400).json({ error: 'Invalid quantity' });
+    return res.status(400).json({ message: 'Invalid quantity' });
   }
 
   // Check if product exists
   const product = await Product.findByPk(productId);
   if (!product) {
-    return res.status(404).json({ error: 'Product not found' });
+    return res.status(404).json({ message: 'Product not found' });
   }
 
   // Update cart item
@@ -33,9 +33,9 @@ exports.addToCart = async (req, res) => {
 };
 
 
-exports.getCart = async (req, res) => {
+exports.getCart = async (req, res, next) => {
   if (!req.user.userId) {
-    return res.status(401).json({ error: 'User ID is required' });
+    return res.status(401).json({ message: 'User ID is required' });
   }
 
   const { page = 1, limit = 10 } = req.query; // Get page and limit from query params
@@ -51,11 +51,11 @@ exports.getCart = async (req, res) => {
     res.status(200).json(cart);
   } catch (error) {
     console.error(error); // Log the error
-    res.status(500).json({ error: 'Failed to retrieve cart' });
+    res.status(500).json({ message: 'Failed to retrieve cart' });
   }
 };
 
-exports.removeItem = async (req, res) => {
+exports.removeItem = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const userId = req.user.userId;
@@ -71,7 +71,7 @@ exports.removeItem = async (req, res) => {
   }
 };
 
-exports.updateQuantity = async (req, res) => {
+exports.updateQuantity = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const userId = req.user.userId;

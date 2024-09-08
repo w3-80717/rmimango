@@ -24,7 +24,8 @@
     "nodemailer": "^6.9.14",
     "razorpay": "^2.9.4",
     "sequelize": "^6.37.3",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "chai": "^5.1.1",

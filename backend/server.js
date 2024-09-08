@@ -7,6 +7,8 @@ const productRoutes = require('./routes/product');
 const cartRoutes = require('./routes/cart');
 const favoriteRoutes = require('./routes/favorite');
 const orderRoutes = require('./routes/order');
+const contactRoutes = require('./routes/contact');
+const { errorMiddleware } = require('./middlewares/errorMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -16,7 +18,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/orders', orderRoutes);
-
+app.use('/api/contact', contactRoutes);
+app.use(errorMiddleware);
 const PORT = process.env.PORT || 3000;
 
 sequelize.sync({ alter: true }).then(() => {

@@ -1,17 +1,17 @@
 // controllers/productController.js
 const Product = require('../models/Product');
 
-exports.addProduct = async (req, res) => {
+exports.addProduct = async (req, res, next) => {
   const { title, description, price, imageUrl } = req.body;
   try {
     const newProduct = await Product.create({ title, description, price, imageUrl });
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res, next) => {
   const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
 
   try {
@@ -23,11 +23,11 @@ exports.getProducts = async (req, res) => {
 
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.updateProduct = async (req, res) => {
+exports.updateProduct = async (req, res, next) => {
   const { productId } = req.params;
   const { title, description, price, imageUrl } = req.body;
   try {
@@ -42,11 +42,11 @@ exports.updateProduct = async (req, res) => {
     await product.save();
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.deleteProduct = async (req, res) => {
+exports.deleteProduct = async (req, res, next) => {
   const { productId } = req.params;
   try {
     const product = await Product.findByPk(productId);
@@ -56,6 +56,6 @@ exports.deleteProduct = async (req, res) => {
     await product.destroy();
     res.status(200).json({ message: 'Product deleted' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

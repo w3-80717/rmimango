@@ -8,7 +8,7 @@ const sequelize = require('../config/database');
 
 
 
-exports.checkout = async (req, res) => {
+exports.checkout = async (req, res, next) => {
   const userId = req.user.userId;
   const { shippingAddress, paymentMethod } = req.body;
   // Validate shipping address and payment method
@@ -64,15 +64,15 @@ exports.checkout = async (req, res) => {
     } catch (error) {
       await transaction.rollback();
       console.error(error); // Log the error
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ message: error.message });
     }
   } catch (error) {
     console.error(error); // Log the error
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
-exports.getOrder = async (req, res) => {
+exports.getOrder = async (req, res, next) => {
   const { orderId } = req.params;
   const userId = req.user.userId;
   const isAdmin = req.user.isAdmin;
@@ -94,12 +94,12 @@ exports.getOrder = async (req, res) => {
     res.status(200).json(order);
   } catch (error) {
     console.error(error); // Log the error
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 
-exports.getAllOrders = async (req, res) => {
+exports.getAllOrders = async (req, res, next) => {
   const userId = req.user.userId;
   const isAdmin = req.user.isAdmin;
 
@@ -121,13 +121,13 @@ exports.getAllOrders = async (req, res) => {
     res.status(200).json(orders);
   } catch (error) {
     console.error(error); // Log the error
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 
 
-exports.updateOrderStatus = async (req, res) => {
+exports.updateOrderStatus = async (req, res, next) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
@@ -145,6 +145,6 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(200).json(order);
   } catch (error) {
     console.error(error); // Log the error
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

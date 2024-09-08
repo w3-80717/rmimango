@@ -1,0 +1,91 @@
+Auth APIs
+Register User
+URI: /api/auth/register
+Method: POST
+Body:
+fullName
+email
+password
+address (optional)
+Login User
+URI: /api/auth/login
+Method: POST
+Body:
+email
+password
+Cart APIs
+Add Item to Cart
+URI: /api/cart
+Method: POST
+Body:
+productId
+quantity
+Get Cart Items
+URI: /api/cart
+Method: GET
+Body: None
+Favorite APIs
+Add Item to Favorites
+URI: /api/favorite
+Method: POST
+Body:
+productId
+Get Favorite Items
+URI: /api/favorite
+Method: GET
+Body: None
+Order APIs
+Create New Order (Checkout)
+URI: /api/order/checkout
+Method: POST
+Body:
+totalPrice
+status (optional)
+Get Order Details
+URI: /api/order/:orderId
+Method: GET
+Body: None
+Get All Orders (for authenticated users)
+URI: /api/order
+Method: GET
+Body: None
+Update Order Status (for admin)
+URI: /api/order/:orderId
+Method: PUT
+Body:
+status
+Product APIs
+Get All Products
+URI: /api/products
+Method: GET
+Body: None
+Get Product Details
+URI: /api/product/:productId
+Method: GET
+Body: None
+Create New Product (for admin)
+URI: /api/product
+Method: POST
+Body:
+title
+description
+price
+imageUrl
+Update Product Details (for admin)
+URI: /api/product/:productId
+Method: PUT
+Body:
+title (optional)
+description (optional)
+price (optional)
+imageUrl (optional)
+Delete Product (for admin)
+URI: /api/product/:productId
+Method: DELETE
+Body: None
+Logout API (/api/auth/logout)
+Remove Item from Cart API (/api/cart/:productId)
+Update Cart Item Quantity API (/api/cart/:productId)
+Remove Item from Favorites API (/api/favorite/:productId)
+Get All Orders API for admin (/api/orders)
+
