@@ -69,7 +69,7 @@ exports.login = async (req, res, next) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '10h' });
 
     // Return token and user data (excluding password)
     const { password: _, ...userData } = user.dataValues;

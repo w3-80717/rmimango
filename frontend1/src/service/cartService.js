@@ -21,16 +21,22 @@ const getCartItems = async () => {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token
     };
-    const response = await api.get('/api/cart',{headers});
+    const response = await api.get('/api/cart', { headers });
     return response.data;
   } catch (error) {
     throw error.response.data;
+    //throw error.response ? error.response.data : error;
   }
 };
 
 const removeItemFromCart = async (productId) => {
   try {
-    const response = await api.delete(`/api/cart/${productId}`);
+    let token = api.getToken();  // Get the token
+    let headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token  // Include the Authorization header
+    };
+    const response = await api.delete(`/api/cart/${productId}`, { headers }); // Pass headers
     return response.data;
   } catch (error) {
     throw error.response.data;
@@ -39,7 +45,12 @@ const removeItemFromCart = async (productId) => {
 
 const updateCartQuantity = async (productId, quantity) => {
   try {
-    const response = await api.patch(`/api/cart/${productId}`, { quantity });
+    let token = api.getToken();
+    let headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    };
+    const response = await api.patch(`/api/cart/${productId}`, { quantity }, { headers });
     return response.data;
   } catch (error) {
     throw error.response.data;

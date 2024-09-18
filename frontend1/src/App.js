@@ -17,42 +17,45 @@ import Faqs from "./pages/Faqs";
 function App() {
   // const productItems=
   const [cartItems, setCartItems] = useState([]);
-  useEffect(() => {
-    cartService
-      .getCartItems()
-      .then((data) => {
-        setCartItems(data);
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.message === "Invalid token") {
-          alert("You have been logged out.");
-          localStorage.removeItem("token");
-          document.location = "/";
-        }
-      });
+   useEffect(() => {
+    cartService.getCartItems().then(setCartItems).catch(console.error);
   }, []);
-
   const handleAddProduct = (product) => {
+    let pr = 
     cartService
-      .addItemToCart(product.id, 1)
-      .then((data) => {
-        alert("added successfully!");
-        setCartItems(data);
-        console.log(data);
-      })
+      .addItemToCart(product.id, 1);
+      console.log(pr)
+
+      pr.then(() => { console.log("getting cart"); return cartService.getCartItems(); })
+      .then(setCartItems)
       .catch((err) => {
         alert(err.message);
         console.log(err);
       });
   };
 
-  const handleRemoveProduct = (product) => {};
+
+  //const handleRemoveProduct = (product) => {};
+  const handleRemoveProduct = (product) => {
+    cartService
+      .removeItemFromCart(product.id)
+      .then(() => cartService.getCartItems())
+      .then(setCartItems)
+      .catch(console.error);
+  };
+  
+  const handleUpdateQuantity = (productId, quantity) => {
+    cartService
+      .updateCartQuantity(productId, quantity)
+      .then(() => cartService.getCartItems())
+      .then(setCartItems)
+      .catch(console.error);
+  };
   const handleCartClearance = () => {
     setCartItems([]);
   };
 
+  
   return (
     <>
       <BrowserRouter>
@@ -80,6 +83,7 @@ function App() {
                   handleAddProduct={handleAddProduct}
                   handleRemoveProduct={handleRemoveProduct}
                   handleCartClearance={handleCartClearance}
+                  handleUpdateQuantity={handleUpdateQuantity}
                 />
               }
             ></Route>

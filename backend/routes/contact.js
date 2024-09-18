@@ -1,4 +1,4 @@
-// routes/auth.js
+// routes/contact.js
 const express = require('express');
 const { createContactMessage, getAllMessages, deleteMessage } = require('../controllers/contactController');
 const authMiddleware = require('../middlewares/authMiddleware');
