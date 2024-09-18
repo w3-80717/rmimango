@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 // routes/product.js
 const express = require('express');
 const { addProduct, getProducts, updateProduct, deleteProduct } = require('../controllers/productController');
