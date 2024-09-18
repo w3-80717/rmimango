@@ -1,14 +1,25 @@
 import api from './api';
-
-
-const getAllProducts = async () => {
-    try {
-        const response = await api.get('/api/products');
-        return response.data;
-    } catch (error) {
-        console.log(error)
-        throw error.response.data;
-    }
+// Function to fetch products with filtering, sorting, paging, and searching
+const getProducts = async ({ search, sortBy, sortOrder, minPrice, maxPrice, page, limit } = {}) => {
+  try {
+    // Construct query parameters and filter out the ones that are not provided
+    const params = {
+      ...(search && { title: search }),     // Add 'title' only if search is provided
+      ...(sortBy && { sortBy }),            // Add 'sortBy' only if provided
+      ...(sortOrder && { sortOrder }),      // Add 'sortOrder' only if provided
+      ...(minPrice && { minPrice }),        // Add 'minPrice' only if provided
+      ...(maxPrice && { maxPrice }),        // Add 'maxPrice' only if provided
+      ...(page && { page }),                // Add 'page' only if provided
+      ...(limit && { limit }),              // Add 'limit' only if provided
+    };
+    console.log("params");
+    console.log(params);
+    const response = await api.get('/api/products', { params });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error.response?.data || error;
+  }
 };
 
 const getProductDetails = async (productId) => {
@@ -46,4 +57,4 @@ const deleteProduct = async (productId) => {
     }
 };
 
-export { getAllProducts, getProductDetails, createNewProduct, updateProductDetails, deleteProduct };
+export { getProducts, getProductDetails, createNewProduct, updateProductDetails, deleteProduct };

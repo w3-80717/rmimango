@@ -9,7 +9,7 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await productService.getAllProducts(); // Fetch products from backend
+        const data = await productService.getProducts(); // Fetch products from backend
         setProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);

@@ -1,4 +1,5 @@
 // controllers/productController.js
+const { Op } = require('sequelize'); // Import Sequelize operators
 const Product = require('../models/Product');
 
 exports.addProduct = async (req, res, next) => {
@@ -11,14 +12,31 @@ exports.addProduct = async (req, res, next) => {
   }
 };
 
+
 exports.getProducts = async (req, res, next) => {
-  const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC' } = req.query;
+  const { page = 1, limit = 10, sortBy = 'id', sortOrder = 'ASC', title, minPrice, maxPrice } = req.query;
 
   try {
+    // Build the where clause conditionally
+    const where = {};
+
+    if (title) {
+      where.title = { [Op.like]: `%${title}%` };  // Filter by title
+    }
+
+    if (minPrice) {
+      where.price = { ...where.price, [Op.gte]: parseFloat(minPrice) };  // Minimum price filter
+    }
+
+    if (maxPrice) {
+      where.price = { ...where.price, [Op.lte]: parseFloat(maxPrice) };  // Maximum price filter
+    }
+
     const products = await Product.findAll({
+      where,  // Apply the filtering conditions
       offset: (page - 1) * limit,
-      limit,
-      order: [[sortBy, sortOrder.toUpperCase()]],
+      limit: parseInt(limit),  // Limit for pagination
+      order: [[sortBy, sortOrder.toUpperCase()]],  // Sorting
     });
 
     res.status(200).json(products);
