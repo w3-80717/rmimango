@@ -4,19 +4,19 @@ import './Home.css'; // Import CSS for styles
 import * as productService from '../service/productService'; // Import service for API calls
 
 const Home = () => {
-  const [projects, setProjects] = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProducts = async () => {
       try {
-        const data = await productService.getAllProducts(); // Fetch projects from backend
-        setProjects(data);
+        const data = await productService.getAllProducts(); // Fetch products from backend
+        setProducts(data);
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching products:', error);
       }
     };
 
-    fetchProjects();
+    fetchProducts();
   }, []);
 
   return (
@@ -30,16 +30,17 @@ const Home = () => {
         />
       </section>
 
-      {/* Projects Section */}
-      <section className="projects-section">
-        <h2>Our Projects</h2>
-        <div className="projects-grid">
-          {projects.map((project) => (
+      {/* Products Section */}
+      <section className="products-section">
+        <h2>Our Products</h2>
+        <div className="products-grid">
+          {products.map((product) => (
             <Card
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              imageUrl={project.imageUrl}
+              key={product.id}
+              title={product.title}
+              description={product.description}
+              imageUrl={product.imageUrl}
+              price={product.price}
             />
           ))}
         </div>

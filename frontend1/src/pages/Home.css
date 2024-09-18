@@ -29,25 +29,25 @@ body {
     object-fit: cover; /* Ensures the image covers the container */
   }
   
-  /* Projects Section Styling */
-  .projects-section {
+  /* products Section Styling */
+  .products-section {
     padding: 40px 20px;
     text-align: center;
   }
   
-  .projects-section h2 {
+  .products-section h2 {
     font-size: 2.5em;
     margin-bottom: 30px;
   }
   
-  .projects-grid {
+  .products-grid {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 20px;
   }
   
-  .project-card {
+  .product-card {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -56,26 +56,26 @@ body {
     transition: transform 0.3s ease;
   }
   
-  .project-card:hover {
-    transform: translateY(-10px); /* Adds a hover effect on the project cards */
+  .product-card:hover {
+    transform: translateY(-10px); /* Adds a hover effect on the product cards */
   }
   
-  .project-image {
+  .product-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
   }
   
-  .project-content {
+  .product-content {
     padding: 20px;
   }
   
-  .project-content h3 {
+  .product-content h3 {
     margin: 0 0 10px;
     font-size: 1.5em;
   }
   
-  .project-content p {
+  .product-content p {
     margin: 0;
     color: #666;
   }
@@ -86,12 +86,12 @@ body {
       height: 250px;
     }
   
-    .projects-grid {
+    .products-grid {
       flex-direction: column;
       align-items: center;
     }
   
-    .project-card {
+    .product-card {
       width: 100%;
       max-width: 90%;
     }
