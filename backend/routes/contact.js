@@ -4,8 +4,12 @@ const { createContactMessage, getAllMessages, deleteMessage } = require('../cont
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-router.post('/us', createContactMessage);
-router.get('/messages', authMiddleware(true), getAllMessages);
-router.delete('/message/:id', authMiddleware(true), deleteMessage);
+router.post("/us", createContactMessage);
+router.get("/messages", authMiddleware({ requireAdmin: true }), getAllMessages);
+router.delete(
+  "/message/:id",
+  authMiddleware({ requireAdmin: true }),
+  deleteMessage,
+);
 
 module.exports = router;

@@ -25,7 +25,6 @@ function App() {
     cartService
       .addItemToCart(product.id, 1);
       console.log(pr)
-
       pr.then(() => { console.log("getting cart"); return cartService.getCartItems(); })
       .then(setCartItems)
       .catch((err) => {

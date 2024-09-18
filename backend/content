@@ -910,9 +910,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // Admin routes
-router.post('/', authMiddleware(true), addProduct);  // Admin required
-router.put('/:productId', authMiddleware(true), updateProduct);  // Admin required
-router.delete('/:productId', authMiddleware(true), deleteProduct);  // Admin required
+router.post('/', authMiddleware({requireAdmin:true}), addProduct);  // Admin required
+router.put('/:productId', authMiddleware({requireAdmin:true}), updateProduct);  // Admin required
+router.delete('/:productId', authMiddleware({requireAdmin:true}), deleteProduct);  // Admin required
 
 // Public route
 router.get('/', getProducts);
@@ -925,14 +925,14 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // Admin routes
-router.put('/:orderId', authMiddleware(true), updateOrderStatus);  // Admin required
+router.put('/:orderId', authMiddleware({requireAdmin:true}), updateOrderStatus);  // Admin required
 
 // Authenticated routes
 router.post('/checkout', authMiddleware(), checkout);
 router.get('/:orderId', authMiddleware(), getOrder);
 router.get('/', authMiddleware(), getOrder);
 // routes/order.js
-router.get('/', authMiddleware(true), getAllOrders);
+router.get('/', authMiddleware({requireAdmin:true}), getAllOrders);
 
 module.exports = router;
 ==> ./routes/favorite.js <==

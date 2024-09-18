@@ -1,4 +1,4 @@
-const { ValidationError } = require("sequelize")
+const { ValidationError } = require("sequelize");
 
 /**
  * 

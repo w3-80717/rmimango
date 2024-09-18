@@ -1,19 +1,28 @@
 // controllers/orderController.js
-const Order = require('../models/Order');
-const Cart = require('../models/Cart');
-const Product = require('../models/Product');
-const { processPayment } = require('../utils/paymentGateway');
-const OrderItem = require('../models/OrderItem');
-const sequelize = require('../config/database');
+const Razorpay = require("razorpay");
+const Order = require("../models/Order");
+const Cart = require("../models/Cart");
+const Product = require("../models/Product");
+// const { processPayment } = require("../utils/paymentGateway");
+const OrderItem = require("../models/OrderItem");
+const sequelize = require("../config/database");
+// const Paytm = require("paytm-pg-node-sdk");
+const shortid = require("shortid");
 
-
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_ID,
+  key_secret: process.env.RAZORPAY_SECRET,
+});
 
 exports.checkout = async (req, res, next) => {
   const userId = req.user.userId;
   const { shippingAddress, paymentMethod } = req.body;
+
   // Validate shipping address and payment method
   if (!shippingAddress || !paymentMethod) {
-    return res.status(400).json({ message: 'Invalid shipping address or payment method' });
+    return res
+      .status(400)
+      .json({ message: "Invalid shipping address or payment method" });
   }
 
   try {
@@ -24,7 +33,7 @@ exports.checkout = async (req, res, next) => {
     });
 
     if (cartItems.length === 0) {
-      return res.status(400).json({ message: 'No items in the cart' });
+      return res.status(400).json({ message: "No items in the cart" });
     }
 
     // Calculate the total price
@@ -33,18 +42,12 @@ exports.checkout = async (req, res, next) => {
       totalPrice += item.Product.price * item.quantity;
     }
 
-    // Process payment
-    const paymentOrder = await processPayment(totalPrice);
-    if (!paymentOrder) {
-      return res.status(500).json({ message: 'Payment processing failed' });
-    }
-
     // Create a new order and order items in a transaction
     const transaction = await sequelize.transaction();
     try {
       const newOrder = await Order.create(
-        { userId, totalPrice, status: 'Payment Pending', shippingAddress },
-        { transaction }
+        { userId, totalPrice, status: "Payment Pending", shippingAddress },
+        { transaction },
       );
 
       const orderItems = cartItems.map((item) => ({
@@ -55,10 +58,20 @@ exports.checkout = async (req, res, next) => {
       }));
 
       await OrderItem.bulkCreate(orderItems, { transaction });
+      // Process payment
+      const options = {
+        amount: totalPrice,
+        currency: "INR",
+        receipt: shortid.generate(),
+      };
+
+      const order = await razorpay.orders.create(options);
+      console.log(order);
+      await transaction.commit();
+      return res.json(order);
 
       await Cart.destroy({ where: { userId } }, { transaction });
 
-      await transaction.commit();
 
       res.status(201).json({ newOrder, paymentOrder });
     } catch (error) {
@@ -88,8 +101,10 @@ exports.getOrder = async (req, res, next) => {
     }
 
     if (!order) {
-      console.error(`Order not found for user ${userId} and order ID ${orderId}`); // Log the error
-      return res.status(404).json({ message: 'Order not found' });
+      console.error(
+        `Order not found for user ${userId} and order ID ${orderId}`,
+      ); // Log the error
+      return res.status(404).json({ message: "Order not found" });
     }
     res.status(200).json(order);
   } catch (error) {
@@ -97,7 +112,6 @@ exports.getOrder = async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 exports.getAllOrders = async (req, res, next) => {
   const userId = req.user.userId;
@@ -116,7 +130,7 @@ exports.getAllOrders = async (req, res, next) => {
 
     if (orders === null || orders === undefined) {
       console.error(`Cannot get orders for the user ${userId}`); // Log the error
-      return res.status(404).json({ message: 'No orders found' });
+      return res.status(404).json({ message: "No orders found" });
     }
     res.status(200).json(orders);
   } catch (error) {
@@ -125,20 +139,26 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
-
-
 exports.updateOrderStatus = async (req, res, next) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
   // Validate order status
-  if (!['Payment Pending', 'Payment Successful', 'Shipped', 'Delivered', 'Cancelled'].includes(status)) {
-    return res.status(400).json({ message: 'Invalid order status' });
+  if (
+    ![
+      "Payment Pending",
+      "Payment Successful",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+    ].includes(status)
+  ) {
+    return res.status(400).json({ message: "Invalid order status" });
   }
   try {
     const order = await Order.findByPk(orderId);
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+      return res.status(404).json({ message: "Order not found" });
     }
     order.status = status;
     await order.save();
