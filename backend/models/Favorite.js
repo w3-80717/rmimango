@@ -26,8 +26,12 @@ const Favorite = sequelize.define('Favorite', {
   }
 });
 
-Favorite.belongsTo(User, { foreignKey: 'userId' });
-Favorite.belongsTo(Product, { foreignKey: 'productId' });
+Favorite.belongsTo(User, { foreignKey: 'userId',    onDelete: 'CASCADE',
+onUpdate: 'CASCADE',
+ });
+Favorite.belongsTo(Product, { foreignKey: 'productId',    onDelete: 'CASCADE',
+onUpdate: 'CASCADE',
+ });
 
 
 module.exports = Favorite;

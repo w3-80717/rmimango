@@ -1,6 +1,6 @@
 // routes/product.js
 const express = require('express');
-const { addProduct, getProducts, updateProduct, deleteProduct } = require('../controllers/productController');
+const { addProduct, getProducts, updateProduct, deleteProduct, getProductImage } = require('../controllers/productController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -19,5 +19,6 @@ router.delete(
 
 // Public route
 router.get("/", getProducts);
+router.get('/image/:filename', getProductImage);
 
 module.exports = router;

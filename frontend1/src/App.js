@@ -82,7 +82,7 @@ function App() {
             ></Route>
             <Route path="/faqs" element={<Faqs />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
-            <Route path="/admin" component={<Admin/>} /> {/* Admin route */}
+            <Route path="/admin" element={<Admin/>} /> {/* Admin route */}
             <Route
               path="/cart"
               element={

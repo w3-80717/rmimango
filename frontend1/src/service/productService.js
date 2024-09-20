@@ -24,33 +24,46 @@ const getProducts = async ({ search, sortBy, sortOrder, minPrice, maxPrice, page
 
 const getProductDetails = async (productId) => {
     try {
-        const response = await api.get(`/api/product/${productId}`);
+        const response = await api.get(`/api/products/${productId}`);
         return response.data;
     } catch (error) {
         throw new Error(`Failed to get product details: ${error.message}`);
     }
 };
-const createNewProduct = async (title, description, price, imageUrl) => {
-    try {
-        const response = await api.post('/api/product', { title, description, price, imageUrl });
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
+const createNewProduct = async (formData) => {
+  try {
+    let token = api.getToken();
+    let headers = {
+      'Authorization': 'Bearer ' + token
+    };
+    const response = await api.post('/api/products', formData, { headers });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
 };
 
-const updateProductDetails = async (productId, title, description, price, imageUrl) => {
-    try {
-        const response = await api.put(`/api/product/${productId}`, { title, description, price, imageUrl });
-        return response.data;
-    } catch (error) {
-        throw error.response.data;
-    }
+const updateProductDetails = async (productId, formData) => {
+  try {
+    let token = api.getToken();
+    let headers = {
+      'Authorization': 'Bearer ' + token
+    };
+    const response = await api.put(`/api/products/${productId}`, formData, { headers });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
 };
 
 const deleteProduct = async (productId) => {
     try {
-        const response = await api.delete(`/api/product/${productId}`);
+      let token = api.getToken();
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      };
+        const response = await api.delete(`/api/products/${productId}`,{headers});
         return response.data;
     } catch (error) {
         throw error.response.data;
