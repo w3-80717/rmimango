@@ -12,13 +12,21 @@ import Products from "./pages/Products";
 import Cart from "./pages/Cart";
 import Signup from "./pages/Signup";
 import Faqs from "./pages/Faqs";
+import Admin from './pages/Admin';
 //import LoginSignUp from "./components/LoginSignUp";
 
 function App() {
   // const productItems=
   const [cartItems, setCartItems] = useState([]);
    useEffect(() => {
-    cartService.getCartItems().then(setCartItems).catch(console.error);
+    cartService.getCartItems().then(setCartItems).catch((err) => {
+      console.log(err);
+      if (err.message === "Invalid token") {
+        alert("You have been logged out.");
+        localStorage.removeItem("token");
+        document.location = "/";
+      }
+    });
   }, []);
   const handleAddProduct = (product) => {
     let pr = 
@@ -74,6 +82,7 @@ function App() {
             ></Route>
             <Route path="/faqs" element={<Faqs />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/admin" component={<Admin/>} /> {/* Admin route */}
             <Route
               path="/cart"
               element={
