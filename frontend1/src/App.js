@@ -10,7 +10,7 @@ import Contactus from "./pages/Contactus";
 
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
-import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Faqs from "./pages/Faqs";
 import Admin from './pages/Admin';
 //import LoginSignUp from "./components/LoginSignUp";
@@ -98,7 +98,7 @@ function App() {
               }
             ></Route>
             <Route path="/faqs" element={<Faqs />}></Route>
-            <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/login" element={<Login />}></Route>
             <Route path="/admin" element={<Admin/>} /> {/* Admin route */}
             <Route
               path="/cart"

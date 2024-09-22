@@ -1,15 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaShoppingCart } from "react-icons/fa";
 import "./Navbar.css";
 import { navItems } from "./NavItems";
-import Button from "./Button";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
+  const logout = () => {
+    localStorage.removeItem("token");
+    document.location = "/";
+  };
   // Function to check if the user is an admin
   const checkAdminRole = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwtDecode(token);
       return decodedToken.isAdmin; // Assuming your token has an isAdmin property
@@ -36,7 +39,7 @@ function Navbar() {
           })}
 
           {!isAdmin && (
-            <li className="nav-item">
+            <li className="nav-item nav-right">
               <Link to="/cart">
                 <FaShoppingCart />
               </Link>
@@ -48,9 +51,14 @@ function Navbar() {
               <Link to="/admin">Admin</Link>
             </li>
           )}
+          <li className={"nav-item"+(isAdmin?" nav-right":"")}>
+            {
+              localStorage.getItem('token') ?
+              <Link onClick={logout}>Log out</Link>
+              :
+              <Link to="login">Login</Link>}
+          </li>
         </ul>
-
-        <Button />
       </nav>
     </>
   );

@@ -1,13 +1,16 @@
 @import url(https://fonts.googleapis.com/css2?family=Playwrite+ID:wght@100..400&display=swap);
 .navbar {
     height: 10vh;
-    background: #5d8012;
+    /* background: rgb(0 135 73 / 95%); */
+    /* background-color: #5d8012; */
+    background: rgb(68, 143, 38);
     display: flex;
     justify-content: center;
     align-items: center;
     
   }
   .navbar-logo img{
+    margin-inline-start: 40px;
     width: 10vh;
     clip-path: circle(45%);
     filter: saturate(300%);
@@ -35,7 +38,7 @@
     list-style: none;
     text-align: center;
     width: 80vw;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-right: 1rem;
   }
   
@@ -56,4 +59,7 @@
   
   .nav-item a:hover {
     background: rgb(124, 212, 0);
+  }
+  .nav-item.nav-right{
+      margin-inline-start: auto;
   }
