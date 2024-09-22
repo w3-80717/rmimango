@@ -49,7 +49,8 @@ function App() {
     let pr = 
     cartService
       .addItemToCart(product.id, 1);
-      console.log(pr)
+    console.log(pr);
+    alert('Product added to cart!');
       pr.then(() => { console.log("getting cart"); return cartService.getCartItems(); })
       .then(setCartItems)
       .catch((err) => {
@@ -86,7 +87,7 @@ function App() {
         <Navbar />
         <article className="main-content">
           <Routes>
-            <Route path="/" exact element={<Home />} />
+            <Route path="/" exact element={<Home  handleAddProduct={handleAddProduct} />} />
             <Route path="/contactus" element={<Contactus />} />
             <Route
               path="/products"
