@@ -6,35 +6,37 @@ function Faqs() {
         <div className="fpa">
             <h1 className="faqs">FAQs</h1>
 
-            <p className="fpara" >
-            <strong>Q. How to order?</strong><br/>
+            <p className="fpara">
+                <strong>Q. How to order?</strong>
+                You can place your order through our website. Head to the link to select the products <a href="https://myalphonso.com/collections/all" target="_blank" rel="noopener noreferrer">here</a> and place your order.
+            </p>
 
-You can place your order through our website. Head to the link to select the products https://myalphonso.com/collections/all and place your order.<br/>
+            <p className="fpara">
+                <strong>Q. What are the accepted payment methods?</strong>
+                We accept Visa, MasterCard, American Express, Netbanking, wallets, and UPI via Razorpay. Cash on Delivery is also available.
+            </p>
 
-<strong>Q. What are the accepted payment methods?</strong><br/>
+            <p className="fpara">
+                <strong>Q. What if I receive a damaged shipment?</strong>
+                Don't worry! Email us photos of the damaged Mangoes at support@blobcity.com within 24 hours. We will promptly issue a refund for the damaged Mangoes.
+            </p>
 
-We accept most major gateways, including Visa, Master Card,<br/> American Express, Netbanking, wallets, and UPI via Razorpay as pre-payment option for your order. We also offer Cash on Delivery option for all orders. <br/>
+            <p className="fpara">
+                <strong>Q. When can I expect to receive my delivery after placing an order?</strong>
+                The estimated delivery date is shown at checkout. Since Mangoes are freshly plucked, expect up to +/- 7 days on your delivery date.
+            </p>
 
-<strong>Q. What if I receive a damaged shipment?</strong><br/>
+            <p className="fpara">
+                <strong>Q. Is there a way to reach out to you for product enquiry or any other issues?</strong>
+                You can write to us at support@blobcity.com or send us a WhatsApp message at 9082249404.
+            </p>
 
-Don't worry! Mangoes do get damaged in shipping at times. This is normal and happens. <br/>Just email us photos of what you received to support@blobcity.com within 24 hours of receiving your shipment. We will promptly issue a refund for the damaged / spoilt Mangoes.<br/>
-
-<strong>Q. When can I expect to receive my delivery after placing an order?</strong><br/>
-
-Your estimated delivery date is shown on you cart / checkout screen. Since Mangoes are plucked from the <br/>trees only periodically, you can expect upto a +/- 7 days on your estimated delivery date. All Mangoes are shipped fresh. If your estimated delivery date is far away,<br/> then it does not mean you receive an older batch, it only means we won't be having our next <br/>pluck until closer to your estimated delivery date. You will always receive a fresh pluck.<br/>
-
-<strong>Q. Is there a way to reach out to you for product enquiry or any other issues?</strong><br/>
-
-You can write to us at support@blobcity.com or send us a WhatsApp on 9082249404.<br/>
-
-<strong>Q. When can I expect to receive my refund? </strong><br/>
-
-If you have qualified for a refund, you can expect to receive it within 5-7 working days from the time the refund is initiated. You will receive a notification once the refund is initiated.
-
-
+            <p className="fpara">
+                <strong>Q. When can I expect to receive my refund?</strong>
+                Refunds are processed within 5-7 working days after being initiated. You'll receive a notification once it has been processed.
             </p>
         </div>
-      );
+    );
 }
 
 export default Faqs;
