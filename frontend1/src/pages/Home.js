@@ -3,7 +3,7 @@ import Card from '../components/Card'; // Import the Card component
 import './Home.css'; // Import CSS for styles
 import * as productService from '../service/productService'; // Import service for API calls
 
-const Home = () => {
+const Home = ({handleAddProduct}) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -41,6 +41,7 @@ const Home = () => {
               description={product.description}
               imageUrl={product.imageUrl}
               price={product.price}
+              onAddToCart={()=>handleAddProduct(product)}
             />
           ))}
         </div>
