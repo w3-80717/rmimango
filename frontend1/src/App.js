@@ -28,6 +28,23 @@ function App() {
       }
     });
   }, []);
+   useEffect(() => {
+       const token = localStorage.getItem('token');
+       const loginTime = localStorage.getItem('loginTime');
+       console.log("hii")
+       const currentTime = new Date().getTime(); // Current timestamp
+       // If token and loginTime exist, check if 10 hours have passed
+       if (token && loginTime) {
+         const timePassed = currentTime - parseInt(loginTime); // Time passed since login (in milliseconds)
+   
+         if (timePassed > 10 * 60 * 60 * 1000) { // 10 hours = 10 * 60 * 60 * 1000 milliseconds
+           // More than 10 hours have passed, log out the user
+           localStorage.removeItem('token');
+           localStorage.removeItem('loginTime');
+           window.location.href = '/signup'; // Redirect to login page
+         }
+       }
+     });
   const handleAddProduct = (product) => {
     let pr = 
     cartService

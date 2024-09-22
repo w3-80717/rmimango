@@ -50,6 +50,8 @@ const LoginSignUp = () => {
     console.log(email, password);
     authService.loginUser({ email, password }).then((data) => {
       localStorage.setItem('token', data.token);
+      const loginTime = new Date().getTime(); // Get current timestamp
+      localStorage.setItem('loginTime', loginTime); // Store login time
       document.location = "/";
 
 
