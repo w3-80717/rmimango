@@ -55,7 +55,7 @@
     border-radius: 5px;
 }
 
-.nav-item a:hover {
+.nav-item a:is(:hover,.nav-item-current) {
     background: rgb(124, 212, 0);
 }
 

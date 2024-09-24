@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import "./Navbar.css";
 import { navItems } from "./NavItems";
@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
   const [click, setClick] = useState(false);
-
+  const location = useLocation();
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
 
@@ -42,7 +42,7 @@ function Navbar() {
           {navItems.map((item) => {
             return (
               <li key={item.id} className={item.cName}>
-                <Link to={item.path} onClick={closeMobileMenu}>
+                <Link className={location.pathname===item.path?"nav-item-current":"" } to={item.path} onClick={closeMobileMenu}>
                   {item.title}
                 </Link>
               </li>
@@ -51,7 +51,7 @@ function Navbar() {
 
           {!isAdmin && (
             <li className="nav-item nav-right">
-              <Link to="/cart" onClick={closeMobileMenu}>
+              <Link className={location.pathname==="/cart"?"nav-item-current":"" } to="/cart" onClick={closeMobileMenu}>
                 <FaShoppingCart />
               </Link>
             </li>
@@ -59,7 +59,7 @@ function Navbar() {
 
           {isAdmin && (
             <li className="nav-item">
-              <Link to="/admin" onClick={closeMobileMenu}>Admin</Link>
+              <Link className={location.pathname==="/admin"?"nav-item-current":"" } to="/admin" onClick={closeMobileMenu}>Admin</Link>
             </li>
           )}
 
@@ -67,7 +67,7 @@ function Navbar() {
             {localStorage.getItem("token") ? (
               <Link onClick={logout}>Log out</Link>
             ) : (
-              <Link to="login" onClick={closeMobileMenu}>Login</Link>
+              <Link className={location.pathname==="/login"?"nav-item-current":"" } to="login" onClick={closeMobileMenu}>Login</Link>
             )}
           </li>
         </ul>
