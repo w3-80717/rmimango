@@ -5,39 +5,40 @@
     overflow: hidden;
     width: 300px;
     transition: transform 0.3s ease;
-  }
-  
-  .card:hover {
+}
+
+.card:hover {
     transform: translateY(-10px); /* Adds a hover effect on the cards */
-  }
-  
-  .card-image {
+}
+
+.card-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
-  }
-  
-  .card-content {
+}
+
+.card-content {
     padding: 20px;
-  }
-  
-  .card-title {
+}
+
+.card-title {
     margin: 0 0 10px;
     font-size: 1.5em;
-  }
-  
-  .card-description {
+}
+
+.card-description {
     margin: 0 0 10px;
     color: #666;
-  }
-  
-  .card-price {
+}
+
+.card-price {
     margin: 0 0 10px;
     font-size: 1.2em;
     color: #333;
-  }
-  
-  .card-add-button {
+}
+
+.card-add-button {
+    margin-block-start: 10px;
     background-color: #007bff;
     border: none;
     color: #fff;
@@ -45,9 +46,68 @@
     font-size: 1em;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .card-add-button:hover {
+}
+
+.card-add-button:hover {
     background-color: #0056b3;
-  }
-  
+}
+.quantity-control {
+    display: flex;
+    justify-content: flex-start; /* Align everything to the left */
+    align-items: center; /* Align vertically centered */
+    gap: 10px; /* Space between label, buttons, and textbox */
+}
+
+.quantity-control-label {
+    font-size: 14px; /* Label font size */
+    color: #333; /* Label text color */
+    margin-right: 10px; /* Space between label and the input field */
+}
+
+.quantity-control button {
+    width: 35px; /* Square size */
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px; /* Large font size */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Styles for the minus button (red) */
+.quantity-control button:first-of-type {
+    background-color: #e74c3c; /* Red color for the minus button */
+    color: white;
+}
+
+.quantity-control button:first-of-type:hover {
+    transform: translateY(-3px); /* Rise effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the plus button (green) */
+.quantity-control button:last-of-type {
+    background-color: #2ecc71; /* Green color for the plus button */
+    color: white;
+}
+
+.quantity-control button:last-of-type:hover {
+    transform: translateY(-3px); /* Rise effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the input box */
+.quantity-control input {
+    width: 70px; /* Wider input field */
+    height: 35px; /* Taller input */
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+}

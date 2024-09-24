@@ -3,21 +3,28 @@ import Card from '../components/Card'; // Import the Card component
 import './Home.css'; // Import CSS for styles
 import * as productService from '../service/productService'; // Import service for API calls
 
-const Home = ({handleAddProduct}) => {
+const Home = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
   const [products, setProducts] = useState([]);
+  const [cartItemsMod, setCartItemsMod] = useState({}); // Store modified cart items
+  const fetchProductsAndCart = async () => {
+    try {
+      const productData = await productService.getProducts();
+      // Convert the cart array into an object for faster lookup
+      const cartItemsModObject = cartItems.reduce((acc, item) => {
+        acc[item.productId] = item;
+        return acc;
+      }, {});
+
+      setProducts(productData);
+      setCartItemsMod(cartItemsModObject);
+    } catch (error) {
+      console.error('Error fetching products and cart:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await productService.getProducts(); // Fetch products from backend
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+    fetchProductsAndCart(); // Fetch products and cart items together
+  }, [cartItems]);
 
   return (
     <div className="home-container">
@@ -37,11 +44,10 @@ const Home = ({handleAddProduct}) => {
           {products.map((product) => (
             <Card
               key={product.id}
-              title={product.title}
-              description={product.description}
-              imageUrl={product.imageUrl}
-              price={product.price}
-              onAddToCart={()=>handleAddProduct(product)}
+              cartItem={cartItemsMod[product.id]} // Pass the cart item to the card
+              product={product}
+              onAddToCart={() => handleAddProduct(product)} // Handle add to cart
+              onQuantityChange={handleUpdateQuantity} // Handle quantity changes
             />
           ))}
         </div>

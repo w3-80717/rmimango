@@ -1,49 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import Card from '../components/Card'; // Import the Card component
+import React, { useEffect, useState } from "react";
+import Card from "../components/Card"; // Import the Card component
 import "./Products.css"; // Import CSS for styles
-import * as productService from '../service/productService'; // Import service for API calls
-import * as cartService from '../service/cartService'; // Import service for cart operations
+import * as productService from "../service/productService"; // Import service for API calls
+import * as cartService from "../service/cartService"; // Import service for cart operations
 
-const Products = ({ handleAddProduct }) => {
+const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
   const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('id');
-  const [sortOrder, setSortOrder] = useState('ASC');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+  const [cartItemsMod, setCartItemsMod] = useState({});
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("id");
+  const [sortOrder, setSortOrder] = useState("ASC");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [page, setPage] = useState(1); // Pagination state
   const [limit, setLimit] = useState(10); // Limit state
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await productService.getProducts({
-          search,
-          sortBy,
-          sortOrder,
-          minPrice,
-          maxPrice,
-          page,
-          limit,
-        });
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, [search, sortBy, sortOrder, minPrice, maxPrice, page, limit]);
-
-  const handleAddToCart = async (productId) => {
+  const fetchProductsAndCart = async () => {
     try {
-      await cartService.addItemToCart(productId, 1); // Add product to cart
-      alert('Product added to cart!');
+      const productData = await productService.getProducts({search,sortBy,sortOrder,minPrice,maxPrice,page,limit});
+
+      // Convert the cart array into an object for faster lookup
+      const cartItemsModObject = cartItems.reduce((acc, item) => {
+        acc[item.productId] = item;
+        return acc;
+      }, {});
+
+      setProducts(productData);
+      setCartItemsMod(cartItemsModObject);
     } catch (error) {
-      console.error('Error adding product to cart:', error);
-      alert('Failed to add product to cart');
+      console.error("Error fetching products and cart:", error);
     }
   };
+
+  useEffect(() => {
+    fetchProductsAndCart();
+  }, [search, sortBy, sortOrder, minPrice, maxPrice, page, limit, cartItems]);
 
   return (
     <div className="products-container">
@@ -62,7 +53,10 @@ const Products = ({ handleAddProduct }) => {
           <option value="title">Title</option>
           <option value="price">Price</option>
         </select>
-        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
           <option value="ASC">Ascending</option>
           <option value="DESC">Descending</option>
         </select>
@@ -81,7 +75,10 @@ const Products = ({ handleAddProduct }) => {
 
         {/* Pagination controls */}
         <div className="pagination">
-          <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
             Previous
           </button>
           <span>Page {page}</span>
@@ -98,11 +95,10 @@ const Products = ({ handleAddProduct }) => {
         {products.map((product) => (
           <Card
             key={product.id}
-            title={product.title}
-            description={product.description}
-            imageUrl={product.imageUrl}
-            price={product.price} // Add price as a prop
-            onAddToCart={() => handleAddToCart(product.id)} // Handle add to cart
+            cartItem={cartItemsMod[product.id]} // Pass the cart item to the card
+            product={product}
+            onAddToCart={() => handleAddProduct(product)} // Handle add to cart
+            onQuantityChange={handleUpdateQuantity} // Handle quantity changes
           />
         ))}
       </div>
