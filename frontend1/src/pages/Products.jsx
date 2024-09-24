@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from '../components/Card'; // Import the Card component
-import "../components/Products.css"; // Import CSS for styles
+import "./Products.css"; // Import CSS for styles
 import * as productService from '../service/productService'; // Import service for API calls
 import * as cartService from '../service/cartService'; // Import service for cart operations
 

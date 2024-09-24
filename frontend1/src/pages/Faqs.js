@@ -1,5 +1,5 @@
 import React from "react";
-import '../components/Faqs.css'
+import './Faqs.css'
 
 function Faqs() {
     return (

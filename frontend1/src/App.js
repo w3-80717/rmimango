@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import * as cartService from "./service/cartService";
-import Contactus from "./pages/Contactus";
+import ContactUs from "./pages/ContactUs";
 
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
@@ -88,7 +88,7 @@ function App() {
         <article className="main-content">
           <Routes>
             <Route path="/" exact element={<Home  handleAddProduct={handleAddProduct} />} />
-            <Route path="/contactus" element={<Contactus />} />
+            <Route path="/contactus" element={<ContactUs />} />
             <Route
               path="/products"
               element={
