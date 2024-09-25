@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Card from "../components/Card"; // Import the Card component
 import "./Products.css"; // Import CSS for styles
 import * as productService from "../service/productService"; // Import service for API calls
-import * as cartService from "../service/cartService"; // Import service for cart operations
 
 const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
   const [products, setProducts] = useState([]);
@@ -17,7 +16,15 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
 
   const fetchProductsAndCart = async () => {
     try {
-      const productData = await productService.getProducts({search,sortBy,sortOrder,minPrice,maxPrice,page,limit});
+      const productData = await productService.getProducts({
+        search,
+        sortBy,
+        sortOrder,
+        minPrice,
+        maxPrice,
+        page,
+        limit,
+      });
 
       // Convert the cart array into an object for faster lookup
       const cartItemsModObject = cartItems.reduce((acc, item) => {
@@ -53,10 +60,7 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
           <option value="title">Title</option>
           <option value="price">Price</option>
         </select>
-        <select
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-        >
+        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
           <option value="ASC">Ascending</option>
           <option value="DESC">Descending</option>
         </select>
@@ -98,7 +102,9 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
             cartItem={cartItemsMod[product.id]} // Pass the cart item to the card
             product={product}
             onAddToCart={() => handleAddProduct(product)} // Handle add to cart
-            onQuantityChange={handleUpdateQuantity} // Handle quantity changes
+            onQuantityChange={(productId, newQuantity) =>
+              handleUpdateQuantity(productId, newQuantity)
+            } // Handle quantity changes
           />
         ))}
       </div>

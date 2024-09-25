@@ -24,7 +24,8 @@ exports.addToCart = async (req, res, next) => {
   });
 
   if (!created) {
-    cartItem.quantity += quantity;
+    cartItem.quantity = quantity;
+    console.log(cartItem.quantity)
     await cartItem.save();
   }
 
@@ -38,7 +39,7 @@ exports.getCart = async (req, res, next) => {
     return res.status(401).json({ message: 'User ID is required' });
   }
 
-  const { page = 1, limit = 10 } = req.query; // Get page and limit from query params
+  const { page = 1, limit = 5 } = req.query; // Get page and limit from query params
   const offset = (page - 1) * limit; // Calculate offset
 
   try {
@@ -81,6 +82,7 @@ exports.updateQuantity = async (req, res, next) => {
       return res.status(404).json({ message: 'Cart item not found' });
     }
     cartItem.quantity = quantity;
+    console.log(quantity)
     await cartItem.save();
     res.json({ message: 'Cart item quantity updated' });
   } catch (err) {

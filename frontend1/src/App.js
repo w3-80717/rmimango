@@ -72,7 +72,7 @@ function App() {
 
   const handleUpdateQuantity = (productId, quantity) => {
     cartService
-      .addItemToCart(productId, quantity)
+    .updateCartQuantity(productId, quantity)
       .then(() => cartService.getCartItems())
       .then(setCartItems)
       .catch(console.error);

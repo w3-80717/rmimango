@@ -121,10 +121,24 @@
     grid-template-columns: 1fr; /* Switch to a single column */
   }
 
+ 
+
+.description-box textarea{
+    height: 100%;
+    width: 100%;
+    resize: none;
+}
   /* Ensure the description box spans only the single column */
-  .contactus .description-box {
-    grid-column: 1 / span 1;
-  }
+  .description-box{
+    height: 400px;
+    align-items: flex-start;
+}
+
+.description-box textarea{
+    height: 100%;
+    width: 100%;
+    resize: none;
+}
 
   .contactus .submit-container {
     grid-column: 1 / span 1; /* Adjust submit button to single column */
