@@ -7,13 +7,16 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
   const [products, setProducts] = useState([]);
   const [cartItemsMod, setCartItemsMod] = useState({});
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("id");
+  const [prevSearch, setPrevSearch] = useState(""); // Track the previous search term
+  const [sortBy, setSortBy] = useState("title"); // Default sortBy
   const [sortOrder, setSortOrder] = useState("ASC");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [page, setPage] = useState(1); // Pagination state
-  const [limit, setLimit] = useState(10); // Limit state
+  const [limit, setLimit] = useState(20); // Default limit
+  const [filtersChanged, setFiltersChanged] = useState(false); // Track if filters have changed
 
+  // Fetch products and update cart items on initial load and on cart items change
   const fetchProductsAndCart = async () => {
     try {
       const productData = await productService.getProducts({
@@ -33,15 +36,37 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
       }, {});
 
       setProducts(productData);
-      setCartItemsMod(cartItemsModObject);
+      setCartItemsMod(cartItemsModObject); // Update cart items
     } catch (error) {
       console.error("Error fetching products and cart:", error);
     }
   };
 
-  useEffect(() => {
+  const handleApplyFilters = () => {
     fetchProductsAndCart();
-  }, [search, sortBy, sortOrder, minPrice, maxPrice, page, limit, cartItems]);
+    setFiltersChanged(false); // Reset filters changed state after applying
+    setPrevSearch(search); // Update previous search to current search
+  };
+
+  useEffect(() => {
+    fetchProductsAndCart(); // Fetch initial products and cart items
+  }, [cartItems]); // Dependency on cartItems to ensure it's reflected correctly
+
+  // Handle changes in filter inputs
+  useEffect(() => {
+    setFiltersChanged(true); // Mark filters as changed when filter inputs change
+  }, [search, minPrice, maxPrice]);
+
+  // Handle sorting changes
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+    handleApplyFilters(); // Apply filters when sorting is changed
+  };
+
+  // Disable Apply button on initial load
+  useEffect(() => {
+    setFiltersChanged(false); // Initially, filters have not changed
+  }, []); // Only run once on initial mount
 
   return (
     <div className="products-container">
@@ -55,14 +80,11 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="id">ID</option>
-          <option value="title">Title</option>
-          <option value="price">Price</option>
-        </select>
-        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
-          <option value="ASC">Ascending</option>
-          <option value="DESC">Descending</option>
+        <select value={sortBy} onChange={handleSortChange}>
+          <option value="title">A-Z</option>
+          <option value="title_desc">Z-A</option>
+          <option value="price">Price Low to High</option>
+          <option value="price_desc">Price High to Low</option>
         </select>
         <input
           type="number"
@@ -76,23 +98,13 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
         />
-
-        {/* Pagination controls */}
-        <div className="pagination">
-          <button
-            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1}
-          >
-            Previous
-          </button>
-          <span>Page {page}</span>
-          <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
-        </div>
-        <select value={limit} onChange={(e) => setLimit(e.target.value)}>
-          <option value={10}>10 per page</option>
-          <option value={20}>20 per page</option>
-          <option value={50}>50 per page</option>
-        </select>
+        <button 
+          className="apply-button"
+          onClick={handleApplyFilters} 
+          disabled={!filtersChanged} // Disable if filters haven't changed
+        >
+          Apply
+        </button>
       </div>
 
       <div className="products-grid">
@@ -107,6 +119,18 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
             } // Handle quantity changes
           />
         ))}
+      </div>
+
+      {/* Pagination controls */}
+      <div className="pagination">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
       </div>
     </div>
   );

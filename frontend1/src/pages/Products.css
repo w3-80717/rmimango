@@ -20,14 +20,15 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
-    width: 200px;
+    width: 150px; /* Adjust width */
 }
 
 .filters input::placeholder {
     color: #888;
 }
 
-.filters button {
+/* Styles for the Apply button */
+.apply-button {
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
@@ -37,15 +38,33 @@
     transition: background-color 0.3s ease;
 }
 
-.filters button:hover {
+/* Hover effect */
+.apply-button:hover {
     background-color: #0056b3;
 }
 
+/* Disabled state */
+.apply-button:disabled {
+    background-color: #ccc; /* Light grey background */
+    color: #666;            /* Darker grey text */
+    cursor: not-allowed;    /* Change cursor to indicate disabled state */
+}
+
+/* Products grid and cards */
+.products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Pagination styles */
 .pagination {
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
 }
 
 .pagination button {
@@ -66,14 +85,7 @@
     cursor: not-allowed;
 }
 
-/* Products grid and cards */
-.products-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
+/* Card styles */
 .card {
     background-color: #fff;
     border-radius: 10px;
