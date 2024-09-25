@@ -50,6 +50,43 @@ const Home = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
               onQuantityChange={handleUpdateQuantity} // Handle quantity changes
             />
           ))}
+          <footer className='footer'>
+          <h5 className='footer-headline'>At MyAlphonso, we are committed to sourcing the best produce for you directly from 
+            experienced and age-old farms. Your purchase supports the farmers who have worked year-round to 
+            get you their best produce</h5>
+          <p >
+          Note: All photos are for representation purposes only, and may not represent the true product.
+           The actual colour, texture and feel of natural fruit may significantly vary than as 
+           illustrated on the website.
+          </p>
+          
+            <div >
+              <div>
+                <div className='footer-menus'>
+              <ul className='menu-secondary'>
+                <li><a href="" >About Us</a></li>
+                <li><a href="" >Privacy</a></li>
+                <li><a href="" >Terms</a></li>
+                <li><a href="" >Replacement & Refund Policy</a></li>
+              </ul>
+              
+              </div>
+             
+              </div>
+            </div>
+          
+          
+          <div>
+            <div>
+            <form>
+            <h2 className='footer-head'>Subscribe to our emails</h2>
+            </form>
+            </div>
+            <ul>
+              <li><a href="/images/facebook.jpeg" ></a></li>
+            </ul>
+          </div>
+          </footer>
         </div>
       </section>
     </div>

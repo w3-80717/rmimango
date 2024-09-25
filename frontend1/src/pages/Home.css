@@ -92,5 +92,32 @@ body {
       width: 100%;
       max-width: 90%;
     }
+   
   }
-  
+  .footer{
+    background: url(../images/footer-bg4.jpeg);
+    padding:50px 0 42px;
+    background-size: cover;
+    background-position-x: center;
+  }
+
+  .footer-headline{
+    height: 70px
+
+  }
+ 
+  .footer.menus{
+    box-sizing: border-box;
+  }
+  ul {
+    margin: 0 0 1.41575em 3em;
+    padding: 0;
+}
+  .menu-secondary{
+    color: black;
+    list-style-type: none;
+    margin-left: 50px;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: center;
+  }
