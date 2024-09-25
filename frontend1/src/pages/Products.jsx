@@ -101,7 +101,7 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
             key={product.id}
             cartItem={cartItemsMod[product.id]} // Pass the cart item to the card
             product={product}
-            onAddToCart={() => handleAddProduct(product)} // Handle add to cart
+            onAddToCart={handleAddProduct} // Handle add to cart
             onQuantityChange={(productId, newQuantity) =>
               handleUpdateQuantity(productId, newQuantity)
             } // Handle quantity changes

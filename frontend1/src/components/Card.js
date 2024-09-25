@@ -13,29 +13,14 @@ const Card = ({ product, onAddToCart, onQuantityChange, cartItem }) => {
 
   // Handle quantity change internally and trigger external update
   const handleQuantityChange = (newQuantity) => {
-    if (newQuantity >= 0) {
       setQuantity(newQuantity);
       console.log(newQuantity)
-      onQuantityChange(product.id, newQuantity); // Call the external handler to update the global state
-    }
+
   };
 
   const handleIncrease = () => handleQuantityChange(quantity + 1);
   const handleDecrease = () => handleQuantityChange(quantity > 0 ? quantity - 1 : 0);
-
-  const Card = ({ title, description, imageUrl, price, onAddToCart }) => {
-    return (
-      <div className="card">
-        <img src={imageUrl} alt={title} className="card-image" />
-        <div className="card-content">
-          <h3 className="card-title">{title}</h3>
-          <p className="card-description">{description}</p>
-          <p className="card-price">₹ {price}</p> {/* Display price */}
-          <button className="card-add-button" onClick={onAddToCart}>Add to Cart</button> {/* Add to Cart button */}
-        </div>
-      </div>
-    );
-  };
+  
   return (
     <div className="card">
       <img src={product.imageUrl} alt={product.title} className="card-image" />
@@ -46,21 +31,22 @@ const Card = ({ product, onAddToCart, onQuantityChange, cartItem }) => {
 
         {/* Quantity control */}
         <div className="quantity-control">
-          <label className="quantity-control-label">Quantity:</label>
+          <label className="quantity-control-label">{cartItem ? "In cart:" : "Quantity:"}</label>
           <button onClick={handleDecrease}>-</button>
           <input
             type="number"
             value={quantity}
             onChange={(e) => handleQuantityChange(Number(e.target.value))}
           />
+            <label className="quantity-control-label"> KGs</label>
           <button onClick={handleIncrease}>+</button>
         </div>
 
         <button
           className="card-add-button"
-          onClick={() => onAddToCart(product)}
+          onClick={cartItem? ()=>onQuantityChange(product.id, quantity):() => onAddToCart(product, quantity)}
         >
-          {quantity > 0 ? 'Update Cart' : 'Add to Cart'}
+          { cartItem ? 'Update Cart' : 'Add to Cart'}
         </button>
       </div>
     </div>
