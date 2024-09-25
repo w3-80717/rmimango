@@ -147,3 +147,31 @@ h1 {
 .add-product-button:hover {
   background-color: #0056b3;
 }
+.admin-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: center; /* Center align filters */
+}
+
+.admin-filters input,
+.admin-filters select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 200px; /* Fixed width for consistency */
+}
+
+.admin-filters button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-filters button:hover {
+  background-color: #0056b3;
+}

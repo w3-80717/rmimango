@@ -6,101 +6,92 @@ import './Admin.css';
 
 const Admin = () => {
   const [products, setProducts] = useState([]);
-  const [productToEdit, setProductToEdit] = useState(null); // Track which product is being edited
   const [newProduct, setNewProduct] = useState({ title: '', description: '', price: '', imageUrl: '' });
-  const [showProductModal, setShowProductModal] = useState(false); // Control the product modal visibility
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Control the delete modal visibility
-  const [productToDelete, setProductToDelete] = useState(null); // Track which product is being deleted
-  const [imageFile, setImageFile] = useState(null); // New state for image file
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("title");
+  const [sortOrder, setSortOrder] = useState("ASC");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Number of items per page
 
   // Check if user is admin
   const checkAdminRole = () => {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwtDecode(token);
-      if (decodedToken.isAdmin) {
-        return true;
-      }
+      return decodedToken.isAdmin ? true : false;
     }
     return false;
   };
+
   const [isAdmin] = useState(checkAdminRole());
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(); // Fetch products on initial load or when filters change
+  }, [currentPage, search, sortBy, sortOrder]); // Dependencies include currentPage, search, sortBy, sortOrder
 
   const fetchProducts = async () => {
-    const fetchedProducts = await getProducts();
-    setProducts(fetchedProducts);
+    const fetchedProducts = await getProducts({
+      search,
+      sortBy,
+      sortOrder,
+      page: currentPage,
+      limit: itemsPerPage
+    });
+    setProducts(fetchedProducts); // Update products with the response
   };
 
-  // Handle add or update product
-
   const handleAddOrUpdateProduct = async () => {
-      const formData = new FormData();
-      formData.append('title', newProduct.title);
-      formData.append('description', newProduct.description);
-      formData.append('price', newProduct.price);
+    const formData = new FormData();
+    formData.append('title', newProduct.title);
+    formData.append('description', newProduct.description);
+    formData.append('price', newProduct.price);
     if (imageFile) {
-      formData.append('image', imageFile); // Append the image file
-        }
-      if (productToEdit) {
-        await updateProductDetails(productToEdit.id, formData);
-      } else {
-        await createNewProduct(formData);
-      }
-  
-      setNewProduct({ title: '', description: '', price: '' }); // Clear form
-      setImageFile(null); // Reset image file
-      setProductToEdit(null); // Reset editing state
-      setShowProductModal(false); // Close modal
-      fetchProducts(); // Fetch products again after add/update
-    };
+      formData.append('image', imageFile);
+    }
+    if (newProduct.id) {
+      await updateProductDetails(newProduct.id, formData);
+    } else {
+      await createNewProduct(formData);
+    }
 
+    setNewProduct({ title: '', description: '', price: '' });
+    setImageFile(null);
+    setShowProductModal(false);
+    fetchProducts(); // Fetch products again after add/update
+  };
 
   // Open Add Product Modal
   const openAddProductModal = () => {
-    setProductToEdit(null); // Reset any product being edited
-    setNewProduct({ title: '', description: '', price: '', imageUrl: '' }); // Clear form
-    setImageFile(null); // Clear image file
-    setShowProductModal(true); // Open modal for adding new product
-  };
-
-  // Populate form with product details for editing
-  const handleEditProduct = (product) => {
-    setProductToEdit(product);
-    setNewProduct({
-      title: product.title,
-      description: product.description,
-      price: product.price,
-    });
-    setImageFile(null); // Clear image file on edit
+    setNewProduct({ title: '', description: '', price: '' });
+    setImageFile(null);
     setShowProductModal(true);
   };
 
   const handleDeleteProduct = async () => {
     await deleteProduct(productToDelete.id);
-    setShowDeleteModal(false); // Close modal
-    fetchProducts();
+    setShowDeleteModal(false);
+    fetchProducts(); // Fetch products again after deletion
   };
 
   // Open Delete Modal
   const openDeleteModal = (product) => {
     setProductToDelete(product);
-    setShowDeleteModal(true); // Open delete modal
+    setShowDeleteModal(true);
   };
 
   // Cancel Product Modal
   const handleCancelProductModal = () => {
-    setProductToEdit(null); // Reset editing state
-    setShowProductModal(false); // Close modal
+    setShowProductModal(false);
   };
 
   // Cancel Delete Modal
   const handleCancelDeleteModal = () => {
     setProductToDelete(null);
-    setShowDeleteModal(false); // Close modal
+    setShowDeleteModal(false);
   };
 
   if (!isAdmin) {
@@ -111,25 +102,60 @@ const Admin = () => {
     <div className="admin-container">
       <h1>Admin Page - Manage Products</h1>
 
+      {/* Search and Sorting Controls */}
+      <div className="admin-filters">
+        <input
+          type="text"
+          placeholder="Search by title"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="title">Sort by Title</option>
+          <option value="price">Sort by Price</option>
+        </select>
+        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+          <option value="ASC">Ascending</option>
+          <option value="DESC">Descending</option>
+        </select>
+        <button onClick={() => fetchProducts()}>Search</button> {/* Trigger search */}
+      </div>
+
       <button className="add-product-button" onClick={openAddProductModal}>
         Add Product
       </button>
-        <ul className="product-list">
+      <ul className="product-list">
         {products.map((product) => (
           <li key={product.id}>
             <img src={product.imageUrl} alt={product.title} className="product-image" />
             <span>{product.title} - ₹ {product.price}</span>
-            <button onClick={() => handleEditProduct(product)}>Edit</button>
+            <button onClick={() => setNewProduct(product)}>Edit</button>
             <button onClick={() => openDeleteModal(product)}>Delete</button>
           </li>
         ))}
       </ul>
 
+      {/* Pagination Controls */}
+      <div className="pagination">
+        <button 
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>Page {currentPage}</span>
+        <button 
+          onClick={() => setCurrentPage(prev => prev + 1)} // Increment current page for the next button
+        >
+          Next
+        </button>
+      </div>
+
       {/* Add or Edit Product Modal */}
       {showProductModal && (
         <div className="modal">
           <div className="modal-content">
-            <h3>{productToEdit ? 'Edit Product' : 'Add New Product'}</h3>
+            <h3>{newProduct.id ? 'Edit Product' : 'Add New Product'}</h3>
             <input
               type="text"
               placeholder="Title"
@@ -150,10 +176,10 @@ const Admin = () => {
             />
             <input
               type="file"
-              onChange={(e) => setImageFile(e.target.files[0])} // Handle file upload
+              onChange={(e) => setImageFile(e.target.files[0])}
             />
             <button onClick={handleAddOrUpdateProduct}>
-              {productToEdit ? 'Update Product' : 'Add Product'}
+              {newProduct.id ? 'Update Product' : 'Add Product'}
             </button>
             <button onClick={handleCancelProductModal}>Cancel</button>
           </div>
