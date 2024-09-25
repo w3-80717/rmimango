@@ -43,7 +43,7 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
     }
   };
 
-  const handleApplyFilters = (sortBy,sortOrder) => {
+  const handleApplyFilters = (sortByP,sortOrderP) => {
     fetchProductsAndCart(sortBy,sortOrder);
     setFiltersChanged(false); // Reset filters changed state after applying
     setPrevSearch(search); // Update previous search to current search
@@ -96,7 +96,7 @@ const Products = ({ handleAddProduct, handleUpdateQuantity, cartItems }) => {
         />
         <button 
           className="apply-button"
-          onClick={handleApplyFilters} 
+          onClick={()=>handleApplyFilters(sortBy,sortOrder)} 
           disabled={!filtersChanged} // Disable if filters haven't changed
         >
           Apply
