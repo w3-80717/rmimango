@@ -48,22 +48,15 @@ function App() {
     }
   });
   const handleAddProduct = (product,quantity=1) => {
-    let pr = cartService.addItemToCart(product.id, quantity);
-    console.log(pr);
-    pr.then(() => {
-      alert("Product added to cart!");
-      return cartService.getCartItems();
-    })
+    return cartService.addItemToCart(product.id, quantity)
+      .then(() =>cartService.getCartItems())
       .then(setCartItems)
-      .catch((err) => {
-        alert(err.message);
-        console.log(err);
-      });
+      .catch(console.error);
   };
 
   //const handleRemoveProduct = (product) => {};
   const handleRemoveProduct = (product) => {
-    cartService
+   return cartService
       .removeItemFromCart(product.id)
       .then(() => cartService.getCartItems())
       .then(setCartItems)
@@ -71,17 +64,12 @@ function App() {
   };
 
   const handleUpdateQuantity = (productId, quantity) => {
-    cartService
+   return cartService
     .updateCartQuantity(productId, quantity)
-      .then(()=>alert("Updated cart!"))
       .then(() => cartService.getCartItems())
       .then(setCartItems)
       .catch(console.error);
   };
-  const handleCartClearance = () => {
-    setCartItems([]);
-  };
-
   return (
     <>
       <BrowserRouter>
@@ -120,7 +108,6 @@ function App() {
                   cartItems={cartItems}
                   handleAddProduct={handleAddProduct}
                   handleRemoveProduct={handleRemoveProduct}
-                  handleCartClearance={handleCartClearance}
                   handleUpdateQuantity={handleUpdateQuantity}
                 />
               }

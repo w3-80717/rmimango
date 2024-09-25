@@ -44,7 +44,7 @@ const Card = ({ product, onAddToCart, onQuantityChange, cartItem }) => {
 
         <button
           className="card-add-button"
-          onClick={cartItem? ()=>onQuantityChange(product.id, quantity):() => onAddToCart(product, quantity)}
+          onClick={cartItem? ()=>onQuantityChange(product.id, quantity).then(()=>alert("Updated Cart!")):() => onAddToCart(product, quantity).then(()=>alert("Added Product to Cart!"))}
         >
           { cartItem ? 'Update Cart' : 'Add to Cart'}
         </button>
