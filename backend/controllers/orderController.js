@@ -1,31 +1,32 @@
 // controllers/orderController.js
-const Razorpay = require("razorpay");
 const Order = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
-// const { processPayment } = require("../utils/paymentGateway");
 const OrderItem = require("../models/OrderItem");
 const sequelize = require("../config/database");
-// const Paytm = require("paytm-pg-node-sdk");
 const shortid = require("shortid");
+const User = require("../models/User");
+const crypto = require('crypto');
+const OrderTransaction = require("../models/OrderTransaction");
+const merchantKey = process.env.MERCHANT_KEY;
+const salt = process.env.PAYU_SALT;
+const payUPaymentEndpoint = process.env.PAYU_PAYMENT_ENDPOINT;
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_ID,
-  key_secret: process.env.RAZORPAY_SECRET,
-});
+function sha512(str) {
+  return crypto.createHash("sha512").update(str).digest("hex");
+}
 
 exports.checkout = async (req, res, next) => {
   const userId = req.user.userId;
-  const { shippingAddress, paymentMethod } = req.body;
+  const { shippingAddress } = req.body;
 
-  // Validate shipping address and payment method
-  if (!shippingAddress || !paymentMethod) {
+  if (!shippingAddress) {
     return res
       .status(400)
-      .json({ message: "Invalid shipping address or payment method" });
+      .json({ message: "Invalid shipping address" });
   }
 
-  try {
+   {
     // Fetch cart items and products for the user from the database
     const cartItems = await Cart.findAll({
       where: { userId },
@@ -42,48 +43,87 @@ exports.checkout = async (req, res, next) => {
       totalPrice += item.Product.price * item.quantity;
     }
 
-    // Create a new order and order items in a transaction
-    const transaction = await sequelize.transaction();
-    try {
-      const newOrder = await Order.create(
-        { userId, totalPrice, status: "Payment Pending", shippingAddress },
-        { transaction },
-      );
-
-      const orderItems = cartItems.map((item) => ({
-        orderId: newOrder.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        price: item.Product.price,
-      }));
-
-      await OrderItem.bulkCreate(orderItems, { transaction });
-      // Process payment
-      const options = {
-        amount: totalPrice,
-        currency: "INR",
-        receipt: shortid.generate(),
-      };
-
-      const order = await razorpay.orders.create(options);
-      console.log(order);
-      await transaction.commit();
-      return res.json(order);
-
-      await Cart.destroy({ where: { userId } }, { transaction });
-
-
-      res.status(201).json({ newOrder, paymentOrder });
-    } catch (error) {
-      await transaction.rollback();
-      console.error(error); // Log the error
-      res.status(500).json({ message: error.message });
-    }
-  } catch (error) {
-    console.error(error); // Log the error
-    res.status(500).json({ message: error.message });
+    // payu payload and url creation
+    // 
+    const user = await User.findByPk(req.user.userId);
+    let callbackUrl = new URL(req.headers.referer);
+    callbackUrl.pathname = "/api/orders/payment/callback";
+    console.log(callbackUrl);
+    const params = {
+      key: merchantKey,
+      txnid: "TXN" + Date.now(),
+      amount: totalPrice,
+      productinfo: cartItems.map(ci => ci.Product.title).join(';'),
+      firstname: user.firstName,
+      lastname: user.lastName,
+      email: user.email,
+      phone: user.mobile,
+      address: user.address,
+      surl: callbackUrl,
+      furl: callbackUrl,
+      udf1: user.id
+    };
+    // Generate the hash
+    console.log("params created, generating hash")
+    const hashString = `${params.key}|${params.txnid}|${params.amount}|${params.productinfo}|${params.firstname}|${params.email}|${params.udf1}||||||||||${salt}`;
+    const hash = sha512(hashString);
+    console.log("hash generated");
+    params.hash = hash;
+    res.status(200).json({ url: payUPaymentEndpoint, payLoad: params });
+    //--------------------------------------------
+    // // Create a new order and order items in a transaction
+    // const transaction = await sequelize.transaction();
+    // try {
+    // } catch (error) {
+    //   // await transaction.rollback();
+    //   console.error(error); // Log the error
+    //   res.status(500).json({ message: error.message });
+    // }
+    //------------------------------
   }
 };
+
+exports.placeOrder = async (req, res, next) => {
+  // payu will send the hash and verify it is correct
+  const payResBody = req.body;
+  console.log(payResBody);
+  const hashString = `${salt}|${payResBody.status}||||||${payResBody.udf5}|${payResBody.udf4}|${payResBody.udf3}|${payResBody.udf2}|${payResBody.udf1}|${payResBody.email}|${payResBody.firstname}|${payResBody.productinfo}|${payResBody.amount}|${payResBody.txnid}|${payResBody.key}`;
+  console.log(hashString);
+  const hash = sha512(hashString);
+  console.log(hash);
+  if (hash !== payResBody.hash) {
+    return res.status(401).json({ message: "Unauthorized request" });
+  }
+  // verified hash is correct
+  // let's now create transaction object
+  let orderTransaction = new OrderTransaction();
+  orderTransaction.txnid = payResBody.txnid;
+  orderTransaction.amount = payResBody.amount;
+  orderTransaction.txndate = payResBody.addedon;
+  orderTransaction.status = payResBody.status;
+  orderTransaction.userId = payResBody.udf1;
+  if (orderTransaction.status !== 'success') {
+    orderTransaction.save();
+    return res.status(400).json(orderTransaction);
+  }
+  const newOrder = await Order.create(
+    { userId: orderTransaction.userId, totalPrice, status: "PAYMENT_SUCCESS", shippingAddress }
+  );
+
+  const orderItems = cartItems.map((item) => ({
+    orderId: newOrder.id,
+    productId: item.productId,
+    quantity: item.quantity,
+    price: item.Product.price,
+  }));
+
+  await OrderItem.bulkCreate(orderItems, { transaction });
+
+  orderTransaction.orderId = newOrder.id;
+  orderTransaction.save();
+  await Cart.destroy({ where: { userId: orderTransaction.userId } });
+  res.status(201).json({ ...newOrder, ...orderTransaction });
+}
 
 exports.getOrder = async (req, res, next) => {
   const { orderId } = req.params;

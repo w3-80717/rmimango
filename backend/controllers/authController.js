@@ -4,15 +4,18 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 exports.register = async (req, res, next) => {
-  const { fullName, email, password } = req.body;
+  const { firstName, lastName, email, password, address, mobile } = req.body;
 
   // Validate input formats
-  if (!fullName || !email || !password) {
+  if (!firstName || !lastName || !email || !password || !address || !mobile) {
     return res.status(400).json({ message: 'Please fill in all fields' });
   }
 
-  if (!/^[a-zA-Z ]+$/.test(fullName)) {
-    return res.status(400).json({ message: 'Invalid full name format, numbers are not allowed' });
+  if (!/^[a-zA-Z ]+$/.test(firstName)) {
+    return res.status(400).json({ message: 'Invalid first name format, numbers are not allowed' });
+  }
+  if (!/^[a-zA-Z ]+$/.test(lastName)) {
+    return res.status(400).json({ message: 'Invalid last name format, numbers are not allowed' });
   }
 
   if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
@@ -23,9 +26,19 @@ exports.register = async (req, res, next) => {
     return res.status(400).json({ message: 'Password must be at least 8 characters' });
   }
 
+  const mobileRegex = /^\d{10}$/;
+  if (!mobileRegex.test(mobile)) {
+    return res.status(400).json({ message: 'Invalid mobile number. Please enter 10 digits.' });
+
+  }
+
   try {
     // Check if user already exists
-    const existingUser = await User.findOne({ where: { email } });
+    let existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+    existingUser = await User.findOne({ where: { mobile } });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -34,11 +47,11 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = (await User.create({ fullName, email, password: hashedPassword })).dataValues;
+    const newUser = (await User.create({ firstName, lastName, mobile, address, email, password: hashedPassword })).dataValues;
 
     // Return new user without password
     const { password: _, ...user } = newUser;
-    res.status(201).json(user);
+    res.status(201).json({ ...user, success: true });
   } catch (error) {
     // Log error for debugging purposes
     console.error(error);
@@ -73,7 +86,7 @@ exports.login = async (req, res, next) => {
 
     // Return token and user data (excluding password)
     const { password: _, ...userData } = user.dataValues;
-    res.status(200).json({ token, user: userData });
+    res.status(200).json({ token, user: userData, success: true });
   } catch (error) {
     next(error)
   }

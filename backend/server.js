@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require("cors");
 const express = require("express");
+const bodyParser = require('body-parser');
 const sequelize = require("./config/database");
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/product");
@@ -22,9 +23,9 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 const app = express();
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 app.use(cors());
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);

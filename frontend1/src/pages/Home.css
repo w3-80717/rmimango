@@ -95,7 +95,7 @@ body {
    
   }
   .footer{
-    background: url(../images/footer-bg4.jpeg);
+    background: url(../images/footer-bg4-removebg-preview.png);
     padding:50px 0 42px;
     background-size: cover;
     background-position-x: center;
@@ -109,7 +109,7 @@ body {
   .footer.menus{
     box-sizing: border-box;
   }
-  ul {
+  .footer ul {
     margin: 0 0 1.41575em 3em;
     padding: 0;
 }
@@ -120,4 +120,5 @@ body {
     margin-bottom: 0;
     display: flex;
     justify-content: center;
+    gap: 2rem;
   }

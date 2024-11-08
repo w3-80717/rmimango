@@ -76,14 +76,18 @@ exports.updateQuantity = async (req, res, next) => {
   try {
     const productId = req.params.productId;
     const userId = req.user.userId;
-    const quantity = req.body.quantity;
+
+    const quantity = parseInt(req.body.quantity);
     const cartItem = await Cart.findOne({ where: { userId, productId } });
     if (!cartItem) {
       return res.status(404).json({ message: 'Cart item not found' });
     }
-    cartItem.quantity = quantity;
-    console.log(quantity)
-    await cartItem.save();
+    if (quantity === 0) {
+      cartItem.destroy();
+    } else {
+      cartItem.quantity = quantity;
+      await cartItem.save();
+    }
     res.json({ message: 'Cart item quantity updated' });
   } catch (err) {
     console.error(err);

@@ -8,7 +8,7 @@ const { ValidationError } = require("sequelize");
  * @param {import("express").NextFunction} next 
  */
 exports.errorMiddleware = (err, req, res, next) => {
-    console.error(err.stack);
+    console.error(err);
     if (err instanceof ValidationError && err.errors) {
         const errorResponse = {
             errors: err.errors.map((err) => ({

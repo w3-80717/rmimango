@@ -1,6 +1,7 @@
 // models/User.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const mobileValidationRegex = /\d{10}/
 
 const User = sequelize.define('User', {
   id: {
@@ -8,7 +9,11 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     primaryKey: true
   },
-  fullName: {
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  lastName: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -27,18 +32,27 @@ const User = sequelize.define('User', {
   isAdmin: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
-  }
-}, 
-{
-  indexes:[
-    {
-      unique:true,
-      fields:[
-        'email'
-      ]
+  },
+  mobile: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      validator: function (v) {
+        return mobileValidationRegex.test(v);
+      },
     }
-  ]
-}
+  }
+},
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: [
+          'email'
+        ]
+      }
+    ]
+  }
 );
 
 module.exports = User;
